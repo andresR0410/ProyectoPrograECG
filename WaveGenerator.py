@@ -2,6 +2,4 @@
 También se definen funciones para la visualización de los datos y resultados."""
 import numpy as np
 import matplotlib.pyplot as plt
-
-"hola bebecitos"
-"hehe clsmdslfs :P"
+import MetodosEcuaciones as ME

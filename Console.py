@@ -1,20 +1,20 @@
 """Interacción con usuario, pide parámetros para la generación de la señal del ECG, llama las funciones de WaveGenerator
 y retorna el resultado."""
-import WaveGenerator as WG
-
-##
 import tkinter as tk
-
+"""import WaveGenerator as WG
+import MetodosEcuaciones as ME
+import PeakFinder as pkf"""
 
 window= tk.Tk()
-window.config(cursor="arrow", width= 600, height=400)
+window.geometry("1000x600")
+window.config(cursor="arrow")
 
 pf= tk.Label(
-	text= "Bienvenido a nuestro proyecto EGG",
+	text= "Bienvenido al generador de señales de EGG",
 	foreground="white",  # Set the text color to white
-    background="black"  # Set the background color to blac
+    background="green"  # Set the background color to black
 )
-pf.pack()
+pf.pack(fill=tk.X, side=tk.TOP)
 
 def salir():
     caja = tk.messagebox.askquestion('salir de la aplicación', '¿Está seguro que desea cerrar la aplicación?',
@@ -27,33 +27,33 @@ def salir():
 botonsalida = tk.Button(
     master= window,
     text="salir",
-    width=5,
-    height=5,
-    bg="black",
-    fg="red",
+    width=3,
+    bg="grey",
+    fg="black",
     command= salir,
 )
+botonsalida.place(x=0, y=0)
+
 #FRAME DE LOS PARÁMETROS
 parametros= tk.Frame(master=window)
-parametros.place(x=400,y=30)
-parametros.config(bg="blue", width=400, height=300,highlightbackground="black",highlightthickness=1)
+parametros.place(x=700,y=30)
+parametros.config(bg="white", width=250, height=200,highlightbackground="black",highlightthickness=2)
 
 # FRAME DEL ECG
 ECG = tk.Frame(master=window)
-ECG.place(x=15, y=300)
-ECG.config(bg="yellow", width=400, height=300,highlightbackground="black",highlightthickness=1)
+ECG.place(x=150, y=30)
+ECG.config(bg="white", width=370, height=300,highlightbackground="black",highlightthickness=2)
+
 
 #FRAME PUNTOS ai bi
 puntos= tk.Frame(master=window)
-puntos.place(x=15, y=30)
-puntos.config(bg="white", width=400, height=300,highlightbackground="black",highlightthickness=1)
+puntos.place(x=150, y=350)
+puntos.config(bg="lightblue", width=370, height=140,highlightbackground="black",highlightthickness=2)
 
 #FRAME MÉTODOS SOLUCION
 metodos= tk.Frame(master= window)
-metodos.place(x=400,y=300)
-metodos.config(bg="black", width=400, height=300,highlightbackground="black",highlightthickness=1)
-
-
+metodos.place(x=700,y=250)
+metodos.config(bg="white", width=250, height=300,highlightbackground="black",highlightthickness=2)
 
 """PARAMETROS PARA GRÁFICA EGG:
 - Frecuencia cardíaca media
@@ -89,26 +89,26 @@ Lat= tk.StringVar()
 FM= tk.StringVar()
 M= tk.StringVar()
 
-tit= tk.Label(master= parametros, text= "Parámetros").place(x=100, y=5)
+tit= tk.Label(master= parametros, text= "PARÁMETROS", fg="black", bg='white', highlightbackground='black', highlightthickness=2).place(x=80, y=5)
 
-VFrCar = tk.Spinbox(master=parametros, from_=0, to=300, textvariable = FrCar, width = 5).place(x=200, y=25)
-FC = tk.Button(master=parametros, textvariable = FCRes,text="FC= ", command = obtener, width = 3).place(x=50, y=25)
-a = tk.Label(master= parametros, text="FC").place(x=100, y=25)
-
-
-VLat = tk.Spinbox(master=parametros, from_=0, to=300, textvariable = NLatidos, width = 5).place(x=200, y=55)
-Latidos = tk.Button(master=parametros, textvariable = Lat,text="Lat= ", command = obtener, width = 3).place(x=50, y=55)
-b = tk.Label(master= parametros, text="LATIDOS").place(x=100, y=55)
+VFrCar = tk.Spinbox(master=parametros, from_=0, to=300, textvariable = FrCar, width = 5).place(x=170, y=30)
+FC = tk.Button(master=parametros, textvariable = FCRes,text="FC= ", command = obtener, width = 3).place(x=20, y=30)
+a = tk.Label(master= parametros, text="FC", fg="black", bg='orange', highlightbackground="black",highlightthickness=2).place(x=70, y=30)
 
 
-VFM = tk.Spinbox(master=parametros, from_=0, to=300, textvariable =FrMu , width = 5).place(x=200, y=85)
-FMu = tk.Button(master=parametros, textvariable = FM,text="FM= ", command = obtener, width = 3).place(x=50, y=85)
-c = tk.Label(master= parametros, text="F. MUESTREO").place(x=100, y=85)
+VLat = tk.Spinbox(master=parametros, from_=0, to=300, textvariable = NLatidos, width = 5).place(x=170, y=70)
+Latidos = tk.Button(master=parametros, textvariable = Lat,text="Lat= ", command = obtener, width = 3).place(x=20, y=70)
+b = tk.Label(master= parametros, text="LATIDOS", fg="black", bg='orange', highlightbackground="black",highlightthickness=2).place(x=70, y=70)
 
 
-Morfo = tk.Spinbox(master=parametros, from_=0, to=300, textvariable =Morfo , width = 5).place(x=200, y=115)
-Morfologia = tk.Button(master=parametros, textvariable = M,text="FM= ", command = obtener, width = 3).place(x=50, y=115)
-d = tk.Label(master=parametros, text="MORFOLOGÍA").place(x=100, y=115)
+VFM = tk.Spinbox(master=parametros, from_=0, to=300, textvariable =FrMu , width = 5).place(x=170, y=110)
+FMu = tk.Button(master=parametros, textvariable = FM,text="FM= ", command = obtener, width = 3).place(x=20, y=110)
+c = tk.Label(master= parametros, text="F. MUESTREO", fg="black", bg='orange', highlightbackground="black",highlightthickness=3).place(x=70, y=110)
+
+
+Morfo = tk.Spinbox(master=parametros, from_=0, to=300, textvariable =Morfo , width = 5).place(x=170, y=150)
+Morfologia = tk.Button(master=parametros, textvariable = M,text="FM= ", command = obtener, width = 3).place(x=20, y=150)
+d = tk.Label(master=parametros, text="MORFOLOGÍA", fg="black", bg='orange', highlightbackground="black",highlightthickness=2).place(x=70, y=150)
 
 #ECG
 #def ECG():
@@ -125,71 +125,55 @@ d = tk.Label(master=parametros, text="MORFOLOGÍA").place(x=100, y=115)
     #Plot.draw()
 
 
-#PUNTOS ai bi
-
-#frame en el frame
-
-
-
+#Tabla ai, bi
 ab = tk.Frame(master=puntos)
-ab.place(x=10,y=20)
-ab.config(width=350, height=200, bd=8, highlightbackground="black", highlightthickness=1)
+ab.place(x=5,y=5)
+ab.config(width=180, height=100, bd=3,bg='lightblue')
+emptyFrame = tk.Label(master=ab, width=7, height=2, bg='lightblue').grid(row=0,column=0)
+ai = tk.Label(master=ab, text='ai',  width=7, height=2,highlightbackground="black", highlightthickness=2, relief='raised').grid(row=1,column=0)
+bi= tk.Label(master=ab,text='bi',  width=7, height=2,highlightbackground="black", highlightthickness=2,relief='raised').grid(row=2,column=0)
+PFrame = tk.Label(master=ab, text='P', width=7, height=2, highlightbackground="black", highlightthickness=2,relief='raised').grid(row=0,column=1)
+QFrame = tk.Label(master=ab,text='Q', width=7, height=2,highlightbackground="black", highlightthickness=2,relief='raised').grid(row=0,column=2)
+RFrame = tk.Label(master=ab,text='R', width=7, height=2,highlightbackground="black", highlightthickness=2,relief='raised').grid(row=0,column=3)
+SFrame = tk.Label(master=ab,text='S', width=7, height=2,highlightbackground="black", highlightthickness=2,relief='raised').grid(row=0,column=4)
+TFrame = tk.Label(master=ab,text='T', width=7, height=2,highlightbackground="black", highlightthickness=2,relief='raised').grid(row=0,column=5)
+#Se crean los espacios para que el usuario ingrese los datos
+for r in range(1, 3):
+    for c in range(1, 6):
+        cell = tk.Entry(ab, width=5)
+        cell.grid(row=r, column=c)
 
 
+#Botones para elegir el método de solución
+def sel():
+    print('seleccion')
 
-#pequeños frames en el frame
-cua = tk.Frame(master=ab)
-cua.place(x=30, y=5)
-cua.config( width=55, height=50,bd=8, highlightbackground="black",highlightthickness=1)
-e= tk.Label(master= cua, text= "ai").place(x=10,y=10)
+root = tk.Frame(master=metodos)
+root.place(x=0,y=0)
+root.config(width=240, height=290, bg='white')
+titulo = tk.Label(master=root, text='MÉTODOS DE SOLUCIÓN', bg='white')
+titulo.place(x=50, y=20)
+var = tk.IntVar()
+R1 = tk.Radiobutton(master=root, text="Euler hacia adelante", variable=var, value=1,
+                  command=sel, bg='lightgreen')
+R1.place(x=50, y=44)
 
-cua1 = tk.Frame(master=ab)
-cua1.place(x=30, y=55)
-cua1.config( width=50, height=50,bd=8, highlightbackground="black",highlightthickness=1)
-f= tk.Label(master= cua1, text= "bi").place(x=10,y=10)
+R2 = tk.Radiobutton(master=root, text="Euler hacia atrás", variable=var, value=2,
+                  command=sel,bg='lightgreen')
+R2.place(x=50, y=88)
 
-cua2= tk.Frame(master=ab)
-cua2.place(x=80, y=5)
-cua2.config( width=50, height=50,  bd=8, highlightbackground="black",highlightthickness=1)
+R3 = tk.Radiobutton(master=root, text="Euler modificado", variable=var, value=3,
+                  command=sel,bg='lightgreen')
+R3.place(x=50, y=132)
 
-cua3= tk.Frame(master=ab)
-cua3.place(x=80, y=55)
-cua3.config( width=50, height=50,  bd=8, highlightbackground="black",highlightthickness=1)
+R4 = tk.Radiobutton(master=root, text="Runge-Kutta 2", variable=var, value=4,
+                  command=sel,bg='lightgreen')
+R4.place(x=50, y=176)
 
-cua4= tk.Frame(master=ab)
-cua4.place(x=130, y=5)
-cua4.config( width=50, height=50,  bd=8, highlightbackground="black",highlightthickness=1)
+R5 = tk.Radiobutton(master=root, text="Runge-Kutta 4", variable=var, value=5,
+                  command=sel,bg='lightgreen')
+R5.place(x=50, y=220)
+# Procesar parámetros dados
 
-cua5= tk.Frame(master=ab)
-cua5.place(x=130, y=55)
-cua5.config( width=50, height=50,  bd=8, highlightbackground="black",highlightthickness=1)
-
-cua6 = tk.Frame(master=ab)
-cua6.place(x=180, y=5)
-cua6.config( width=50, height=50,bd=8, highlightbackground="black",highlightthickness=1)
-
-cua7 = tk.Frame(master=ab)
-cua7.place(x=180, y=55)
-cua7.config( width=50, height=50,bd=8, highlightbackground="black",highlightthickness=1)
-
-cua8= tk.Frame(master=ab)
-cua8.place(x=230, y=5)
-cua8.config( width=50, height=50,  bd=8, highlightbackground="black",highlightthickness=1)
-
-cua9= tk.Frame(master=ab)
-cua9.place(x=230, y=55)
-cua9.config( width=50, height=50,  bd=8, highlightbackground="black",highlightthickness=1)
-
-cua10= tk.Frame(master=ab)
-cua10.place(x=280, y=5)
-cua10.config( width=50, height=50,  bd=8, highlightbackground="black",highlightthickness=1)
-
-cua11= tk.Frame(master=ab)
-cua11.place(x=280, y=55)
-cua11.config( width=50, height=50,  bd=8, highlightbackground="black",highlightthickness=1)
-#METODOS SOLUCION"""
 
 window.mainloop()
-
-##
-
