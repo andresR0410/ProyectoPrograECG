@@ -216,7 +216,7 @@ button.place(x=5, y=100)
 # Procesar parámetros dados
 
 from tkinter import *
-from pip import Image, ImageTk
+from PIL import Image, ImageTk
 
 img = ImageTk.PhotoImage(Image.open("cora.jpg"))
 lab= Label(image=photo).place(x=50,y=50)
