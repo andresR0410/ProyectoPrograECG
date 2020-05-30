@@ -142,8 +142,7 @@ for r in range(1, 3):
     for c in range(1, 6):
         cell = tk.Entry(ab, width=5)
         cell.grid(row=r, column=c)
-
-
+labelab= tk.Label(master=ab, text="P     Q     R     S    T").place(x=100, y=0)
 #Botones para elegir el método de solución
 def sel():
     print('seleccion')

@@ -1,8 +1,5 @@
 # Ecuaciones diferenciales ECG
-import scipy.optimize as opt
-import scipy.integrate as inte
-import numpy as np
-import math as mt
+
 ##
 #encontrar picos para hallar frecuencia cardíaca desde el ECG
 
@@ -25,6 +22,11 @@ def HR(frecuencia_muestreo):
     return HR
 
 ##
+import scipy.optimize as opt
+import scipy.integrate as inte
+import numpy as np
+import math as mt
+
 def dx(alpha, x, w, y):
     return alpha*x - w*y
 def dy(alpha, x, w, y):
@@ -101,4 +103,79 @@ for i in range(1, len(T)):
     Solback = opt.fsolve(EulerBack, np.array([XEulerBack[i-1], YEulerBack[i-1], ZEulerBack[i-1]]), (XEulerBack[i-1, YEulerBack[i-1],
 
     ]))
+
+
+##
+#RK4
+K11= F1(Y2RK4[iter-1])
+K21= F2(T[iter-1], Y1RK4[iter-1], Y2RK4[iter-1])
+K12= F1(Y2RK4[iter-1]+ 0.5*k21*h)
+K22= F2(T[iter-1] + 0.5*h, Y1RK4[iter-1] + 0.5*K11*h,
+        Y2RK4[iter-1] + 0.5*K21*h)
+K13= F1(Y2RK4[iter-1]+ 0.5* K22* h)
+K23= F2(T[iter-1]) + 0.5*h, Y1RK4[iter-1] + 0.5* K12*h,
+        Y2RK4[iter-1]*0.5*K22*h)
+K14= F1(Y2RK4[iter-1] + K23*h)
+K24= F2(T[iter-1] + h, Y1RK4[iter-1] + K13*h,
+        Y2RK4[iter-1]*K23*h)
+
+Y1RK4[iter]= Y1RK4[iter-1] + (h/6.0)*  (K11 + 2.0*K12 + 2.0*K13+ K14)
+Y2RK4[iter]= Y2RK4[iter-1] + (h/6.0) * (K21+ 2.0*K22 + 2.0*K23 + K24)
+
+##
+#RK2
+K11= F1(Y2RK2[iter-1])
+K21= F2(T[iter-1], Y1RK2[iter-1], Y2RK2[iter-1])
+K12= F1(Y2RK2[iter-1]+ k21*h)
+K22= F2(T[iter-1] + h, Y1RK2[iter-1] + K11*h,
+        Y2RK2[iter-1] + K21*h)
+Y1RK2[iter]= Y1RK2[iter-1] + (h/2.0) * (K11 + K12)
+Y1RK2[iter]= Y2RK2[iter-1]+ (h/2.0) + (K21+K22)
+
+K13= F1(Y2RK4[iter-1]+ 0.5* K22* h)
+K23= F2(T[iter-1] + 0.5*h, Y1RK2[iter-1] +0.5*K12*h,
+        Y2RK2[iter-1] + 0.5*K22*h)
+
+Y1RK4[iter]= Y1RK4[iter-1] + (h/6.0)*  (K11 + 2.0*K12 + 2.0*K13+ K14)
+Y2RK4[iter]= Y2RK4[iter-1] + (h/6.0) * (K21+ 2.0*K22 + 2.0* K23 + K24)
+
+def Fsystem(t,y):
+    return (F1(y[1]),F2(t,y[0], y[1]))
+
+#solve de scipy
+solrk45= inte.solve_ivp(Fsystem,[To,Tf], [Y18,Y20], t_eval=T, method= "rk45")
+
+#grafica estimacion Y1(t) = Y(t)
+
+plt.figure()
+plt.plot(T,Y1Ana(T),"--b")
+plt.plot(T, Y1EulerFor, "r")
+plt.plot(T, Y1EulerBack, "g")
+plt.plot(T, Y1EulerMod, "m")
+plt.plot(T, Y1EulerModRoot, "--c")
+plt.plot(T, Y1RK2, "orange")
+plt.plot(T, Y1RK4, "maroon")
+plt.plot(T, solrk45.y[0],"---",color="olive")
+plt.xlabel("t",fontsize= 15)
+plt.title("estimaciones y1(t)= y(t)''")
+plt.legend(["analitica", "eulerfor", "eulerbakc", "eulermod", "eulermodroot", "rk2", "rk4", "SOLRK45"])
+
+plt.grid(True)
+
+plt.figure()
+plt.plot(T,Y2Ana(T),"--b")
+plt.plot(T, Y2EulerFor, "r")
+plt.plot(T, Y2EulerBack, "g")
+plt.plot(T, Y2EulerMod, "m")
+plt.plot(T, Y2EulerModRoot, "--c")
+plt.plot(T, Y2RK2, "orange")
+plt.plot(T, Y2RK4, "maroon")
+plt.plot(T, solrk45.y[1],"---",color="olive")
+plt.xlabel("t",fontsize= 15)
+plt.title("estimaciones y1(t)= y(t)''")
+plt.legend(["analitica", "eulerfor", "eulerbakc", "eulermod", "eulermodroot", "rk2", "rk4", "SOLRK45"])
+
+plt.grid(True)
+
+
 
