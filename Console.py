@@ -142,7 +142,7 @@ for r in range(1, 3):
     for c in range(1, 6):
         cell = tk.Entry(ab, width=5)
         cell.grid(row=r, column=c)
-labelab= tk.Label(master=ab, text="P     Q     R     S    T").place(x=100, y=0)
+
 #Botones para elegir el método de solución
 def sel():
     print('seleccion')
@@ -173,6 +173,12 @@ R5 = tk.Radiobutton(master=root, text="Runge-Kutta 4", variable=var, value=5,
                   command=sel,bg='lightgreen')
 R5.place(x=50, y=220)
 # Procesar parámetros dados
+"""import Image
 
+imageFile = "cora.jpg"
+window.im1 = Image.open(imageFile)"""
+
+b1= tk.Button(master=window, text="Importar datos", bg='lightgreen').place(x=50,y=50)
+b1= tk.Button(master=window, text="Cargar datos",  bg='lightgreen').place(x=50,y=80)
 
 window.mainloop()

@@ -177,5 +177,24 @@ plt.legend(["analitica", "eulerfor", "eulerbakc", "eulermod", "eulermodroot", "r
 
 plt.grid(True)
 
+##
+import numpy as np
+import scipy.integrate as inte
+import scipy as sp
+th = np.arctan2(x/y)
+deltaT = th - thi
+z0 = 0.00015*np.sin(2*np.pi*t*0.25)
+thi = [-np.pi/3, -np.pi/12, 0, np.pi/12, np.pi/2]
 
+ai = [1.2, -5.0, 30.0, -7.5, 0.75]
+bi = [0.25, 0.1, 0.1, 0.1, 0.4]
+alpha = 1.0 - np.sqrt((x**2.0) + (y**2.0))
+w = 2.0*np.pi/t
+dx= alpha*x - w*y
+dy= alpha*x + w*y
+dz1= -np.sum(ai* deltaT* np.exp(deltaT**2.0/2.0*bi**2.0) - (z-z0))
+i= sp.integrate(dz1)
+print(i)
 
+array= np.array[[dx,dy,i],[x,y,z]]
+sol= sp.fsolve(array, )
