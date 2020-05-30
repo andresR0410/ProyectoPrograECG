@@ -173,12 +173,32 @@ R5 = tk.Radiobutton(master=root, text="Runge-Kutta 4", variable=var, value=5,
                   command=sel,bg='lightgreen')
 R5.place(x=50, y=220)
 # Procesar parámetros dados
-"""import Image
+
+
+
+
+import Image
 
 imageFile = "cora.jpg"
 window.im1 = Image.open(imageFile)"""
 
-b1= tk.Button(master=window, text="Importar datos", bg='lightgreen').place(x=50,y=50)
+
+b1= tk.Button(master=window, text="Exportar datos", bg='lightgreen').place(x=50,y=50)
+acá entonces se debe crear un archivo bin con los datos de la gráfica T ósea x, y Y ósea Z, HR
+si se ponen los puntos ai y bi, se pone HR
+
+#DOS TIPOS DE ARCHIVO: CUANDO TENEMOS ai y bi y cuando tenemos los parámetros
+
+ 
+input_file = open("myfileX.bin", "rb")
+struct.pack(ecg.
+
 b1= tk.Button(master=window, text="Cargar datos",  bg='lightgreen').place(x=50,y=80)
+
+
+#exportar los datos de la gráfica
+
+
+#importar
 
 window.mainloop()
