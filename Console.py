@@ -1,3 +1,8 @@
+#TODO: Exportar archivos binarios con datos de gráfica
+#TODO: Desempaquetar archivos en binario importados y graficar
+#TODO: LLamar funciones de ecuaciones para resolver
+#TODO: Botón de calcular Heart Rate (if parametros, FC.get(), findpeaks())
+
 """Interacción con usuario, pide parámetros para la generación de la señal del ECG, llama las funciones de WaveGenerator
 y retorna el resultado."""
 import tkinter as tk
@@ -41,7 +46,6 @@ ECG = tk.Frame(master=window)
 ECG.place(x=150, y=30)
 ECG.config(bg="white", width=370, height=300,highlightbackground="black",highlightthickness=2)
 
-
 #FRAME PUNTOS ai bi
 puntos= tk.Frame(master=window)
 puntos.place(x=150, y=350)
@@ -58,11 +62,10 @@ metodos.config(bg="white", width=250, height=300,highlightbackground="black",hig
 - Frecuencia de muestreo
 - Morfología de la forma de onda (valores de , y )."""
 
-FrCar = tk.StringVar()
-NLatidos= tk.StringVar()
-FrMu= tk.StringVar()
-Morfo= tk.StringVar()
-
+FrCar = tk.IntVar()
+NLatidos= tk.IntVar()
+FrMu= tk.IntVar()
+Morfo= tk.IntVar()
 
 def obtener():
     FC= FrCar.get()
@@ -81,10 +84,10 @@ def obtener():
     # aca debemos usar la función
     M.set(Mor)
 
-FCRes= tk.StringVar()
-Lat= tk.StringVar()
-FM= tk.StringVar()
-M= tk.StringVar()
+FCRes= tk.IntVar()
+Lat= tk.IntVar()
+FM= tk.IntVar()
+M= tk.IntVar()
 
 tit= tk.Label(master= parametros, text= "PARÁMETROS", fg="black", bg='white', highlightbackground='black', highlightthickness=2).place(x=80, y=5)
 
@@ -108,19 +111,18 @@ Morfologia = tk.Button(master=parametros, textvariable = M,text="FM= ", command 
 d = tk.Label(master=parametros, text="MORFOLOGÍA", fg="black", bg='orange', highlightbackground="black",highlightthickness=2).place(x=70, y=150)
 
 #ECG
-#def ECG():
-    #PUES FALTA TODOJAJA
-    #fig = plt.Figure(figsize=(4, 2), dpi=100)
-    #t = np.arange(0,10, 0.01)
-    #fig.add_subplot(111).plot(t, fun(t))     # subplot(filas, columnas, item)
-    #fig.suptitle(opcion.get())
+"""def ECG():
+    PUES FALTA TODOJAJA
+    fig = plt.Figure(figsize=(4, 2), dpi=100)
+    t = np.arange(0,10, 0.01)
+    fig.add_subplot(111).plot(t, fun(t))     # subplot(filas, columnas, item)
+    fig.suptitle(opcion.get())
 
-    #plt.close()
-    #plt.style.use('seaborn-darkgrid')
+    plt.close()
+    plt.style.use('seaborn-darkgrid')
 
-    #Plot = FigureCanvasTkAgg(fig, master=window)
-    #Plot.draw()
-
+    Plot = FigureCanvasTkAgg(fig, master=window)
+    Plot.draw()"""
 
 #Tabla ai, bi
 ab = tk.Frame(master=puntos)
@@ -140,34 +142,54 @@ for r in range(1, 3):
         cell = tk.Entry(ab, width=5)
         cell.grid(row=r, column=c)
 #Botones para elegir el método de solución
-def sel():
-    print('seleccion')
+
 
 root = tk.Frame(master=metodos)
 root.place(x=0,y=0)
 root.config(width=240, height=290, bg='white')
 titulo = tk.Label(master=root, text='MÉTODOS DE SOLUCIÓN', bg='white')
 titulo.place(x=50, y=20)
-var = tk.IntVar()
-R1 = tk.Radiobutton(master=root, text="Euler hacia adelante", variable=var, value=1,
-                  command=sel, bg='lightgreen')
+EuAd= tk.IntVar()
+EuAt=tk.IntVar()
+EuMod=tk.IntVar()
+RK2=tk.IntVar()
+RK4=tk.IntVar()
+
+def sel():
+    """plt.figure()
+    if EuAd.get():
+        #llamar función de euler hacia adelante
+    if EuAt.get():
+        # llamar función de euler hacia atrás
+    if EuMod.get():
+        # llamar función de euler modificado
+    if RK2.get():
+        # llamar función de Runge-Kutta 2
+    if RK4.get():
+         # llamar función de Runge-Kutta 4
+    plt.show()"""
+
+R1 = tk.Checkbutton(master=root, text="Euler hacia adelante", command=sel, bg='lightgreen',
+                    onvalue=True, offvalue=False, variable=EuAd)
 R1.place(x=50, y=44)
 
-R2 = tk.Radiobutton(master=root, text="Euler hacia atrás", variable=var, value=2,
-                  command=sel,bg='lightgreen')
+R2 = tk.Checkbutton(master=root, text="Euler hacia atrás", command=sel,bg='lightgreen',
+                    onvalue=True, offvalue=False, variable=EuAt)
 R2.place(x=50, y=88)
 
-R3 = tk.Radiobutton(master=root, text="Euler modificado", variable=var, value=3,
-                  command=sel,bg='lightgreen')
+R3 = tk.Checkbutton(master=root, text="Euler modificado", command=sel,bg='lightgreen',
+                    onvalue=True, offvalue=False, variable=EuMod)
 R3.place(x=50, y=132)
 
-R4 = tk.Radiobutton(master=root, text="Runge-Kutta 2", variable=var, value=4,
-                  command=sel,bg='lightgreen')
+R4 = tk.Checkbutton(master=root, text="Runge-Kutta 2", command=sel,bg='lightgreen',
+                    onvalue=True, offvalue=False, variable=RK2)
 R4.place(x=50, y=176)
 
-R5 = tk.Radiobutton(master=root, text="Runge-Kutta 4", variable=var, value=5,
-                  command=sel,bg='lightgreen')
+R5 = tk.Checkbutton(master=root, text="Runge-Kutta 4", command=sel,bg='lightgreen',
+                    onvalue=True, offvalue=False, variable=RK4)
 R5.place(x=50, y=220)
+
+
 #Heart rate
 
 #Importar  exportar archivos
