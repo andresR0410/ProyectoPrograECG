@@ -45,6 +45,7 @@ parametros.config(bg="white", width=250, height=200,highlightbackground="black",
 ECG = tk.Frame(master=window)
 ECG.place(x=150, y=30)
 ECG.config(bg="white", width=370, height=300,highlightbackground="black",highlightthickness=2)
+labelECG= tk.Label(master= ECG, font= ("Helvetica", 18), text= "SEÑAL DE ECG",highlightbackground='black', highlightthickness=2,fg="black", bg='orange').place(x=100, y=5)
 
 #FRAME PUNTOS ai bi
 puntos= tk.Frame(master=window)
@@ -192,6 +193,12 @@ R5.place(x=50, y=220)
 
 #Heart rate
 
+HRbut= tk.Button(master=window, height= 3, width=9, highlightbackground='black',
+                   highlightthickness=2, bg= "orange", text= "Hallar HR").place(x=5,y=200)
+framHR= tk.Frame(master=window)
+framHR.config(height= 40, width=50, highlightbackground='black', highlightthickness=2)
+framHR.place(x=85, y=205)
+
 #Importar  exportar archivos
 
 #Importar archivo
@@ -208,5 +215,10 @@ button.place(x=5, y=100)
 
 # Procesar parámetros dados
 
+from tkinter import *
+from pip import Image, ImageTk
+
+img = ImageTk.PhotoImage(Image.open("cora.jpg"))
+lab= Label(image=photo).place(x=50,y=50)
 
 window.mainloop()
