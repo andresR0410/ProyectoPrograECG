@@ -3,6 +3,7 @@ y retorna el resultado."""
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
+import struct as st
 """import WaveGenerator as WG
 import MetodosEcuaciones as ME
 import PeakFinder as pkf"""
@@ -12,7 +13,7 @@ window.geometry("1000x600")
 window.config(cursor="arrow")
 
 pf= tk.Label(
-	text= "Bienvenido al generador de señales de EGG",
+	text= "Bienvenido al generador de señales de ECG",
 	foreground="white",  # Set the text color to white
     background="green"  # Set the background color to black
 )
@@ -25,16 +26,10 @@ def salir():
         window.destroy()
     else:
         messagebox.showinfo('Retornar', 'Será retornado a la aplicación')
-
-botonsalida = tk.Button(
-    master= window,
-    text="salir",
-    width=3,
-    bg="grey",
-    fg="black",
-    command= salir
-)
-botonsalida.place(x=0, y=0)
+photo = tk.PhotoImage(file = "Boton-salir.png")
+photoimage = photo.subsample(20, 20)
+botonsalida = tk.Button(master= window, image=photoimage, command= salir, padx=True, pady=True, bg='red')
+botonsalida.place(x=5, y=0)
 
 #FRAME DE LOS PARÁMETROS
 parametros= tk.Frame(master=window)
@@ -180,11 +175,14 @@ R5.place(x=50, y=220)
 #Importar archivo
 def UploadAction(event=None):
     filename = tk.filedialog.askopenfilename()
+    #Unpackear los datos importados
+    """st.unpack()
+    plt.plot()"""
     print('Selected:', filename)
 
 button = tk.Button(window, text='Import file', command=UploadAction, height=3, width=9, highlightbackground='black',
                    highlightthickness=2, relief='raised', bg='lightgreen')
-button.place(x=5, y=30)
+button.place(x=5, y=100)
 
 # Procesar parámetros dados
 
