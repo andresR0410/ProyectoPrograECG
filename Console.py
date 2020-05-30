@@ -1,6 +1,8 @@
 """Interacción con usuario, pide parámetros para la generación de la señal del ECG, llama las funciones de WaveGenerator
 y retorna el resultado."""
 import tkinter as tk
+from tkinter import filedialog
+from tkinter import messagebox
 """import WaveGenerator as WG
 import MetodosEcuaciones as ME
 import PeakFinder as pkf"""
@@ -17,12 +19,12 @@ pf= tk.Label(
 pf.pack(fill=tk.X, side=tk.TOP)
 
 def salir():
-    caja = tk.messagebox.askquestion('salir de la aplicación', '¿Está seguro que desea cerrar la aplicación?',
+    caja = messagebox.askquestion('salir de la aplicación', '¿Está seguro que desea cerrar la aplicación?',
                                        icon='warning')
     if caja == 'yes':
         window.destroy()
     else:
-        tk.messagebox.showinfo('Retornar', 'Será retornado a la aplicación')
+        messagebox.showinfo('Retornar', 'Será retornado a la aplicación')
 
 botonsalida = tk.Button(
     master= window,
@@ -30,7 +32,7 @@ botonsalida = tk.Button(
     width=3,
     bg="grey",
     fg="black",
-    command= salir,
+    command= salir
 )
 botonsalida.place(x=0, y=0)
 
@@ -142,7 +144,6 @@ for r in range(1, 3):
     for c in range(1, 6):
         cell = tk.Entry(ab, width=5)
         cell.grid(row=r, column=c)
-labelab= tk.Label(master=ab, text="P     Q     R     S    T").place(x=100, y=0)
 #Botones para elegir el método de solución
 def sel():
     print('seleccion')
@@ -172,6 +173,19 @@ R4.place(x=50, y=176)
 R5 = tk.Radiobutton(master=root, text="Runge-Kutta 4", variable=var, value=5,
                   command=sel,bg='lightgreen')
 R5.place(x=50, y=220)
+#Heart rate
+
+#Importar  exportar archivos
+
+#Importar archivo
+def UploadAction(event=None):
+    filename = tk.filedialog.askopenfilename()
+    print('Selected:', filename)
+
+button = tk.Button(window, text='Import file', command=UploadAction, height=3, width=9, highlightbackground='black',
+                   highlightthickness=2, relief='raised', bg='lightgreen')
+button.place(x=5, y=30)
+
 # Procesar parámetros dados
 
 
