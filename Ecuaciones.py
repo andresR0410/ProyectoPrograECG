@@ -22,6 +22,12 @@ def HR(frecuencia_muestreo):
     # la frecuencia se da:
     HR = np.mean(tacobpm)
     return HR
+##
+import scipy.optimize as opt
+import scipy.integrate as inte
+import numpy as np
+import math as mt
+import matplotlib.pyplot as plt
 
 pi = np.pi
 P = [-0.2, -pi/3, 1.2, 0.25]
@@ -59,10 +65,26 @@ def EulerFoward(x0, y0, z0, t0, t, h, dx, dy, dz):
     Y[0] = y0
     Z[0] = z0
     for i in range(1, tam):
-        X[i] = X[i-1] + h * (dx(X[i-1],T[i-1],Y[i-1]))
-        Y[i] = Y[i - 1] + h * (dy(X[i - 1], T[i - 1], Y[i - 1]))
-        Z[i] = Z[i - 1] + h * (dz(X[i - 1], Y[i - 1], Z[i-1], T[i-1]))
+        X[i] = X[i-1] + h* (dx(X[i-1],T[i-1],Y[i-1]))
+        Y[i] = Y[i -1] + h * (dy(X[i - 1], T[i - 1], Y[i - 1]))
+        Z[i] = Z[i -1] + h * (dz(X[i - 1], Y[i - 1], Z[i-1], T[i-1]))
+
     plt.figure()
     plt.plot(T,Z)
     return T, Z
-EulerFoward(1,0,0.04,0, 30, 0.01, dx, dy, dz)
+def EulerBack(x0, y0, z0, t0, t, h, dx, dy, dz):
+    T = np.arange(t0, t + h, h)
+    tam = np.size(T)
+    X = np.zeros(tam)
+    Y = np.zeros(tam)
+    Z = np.zeros(tam)
+    X[0] = x0
+    Y[0] = y0
+    Z[0] = z0
+    for i in range(1, tam):
+        X[i] = X[i] - h * (dx(X[i], Y[i], Z[i], T[i]))
+        Y[i] = Y[i] - h * (dy(X[i], T[i], Y[i]))
+        Z[i] = Z[i] - h * (dz(X[i], Y[i], Z[i], T[i]))
+    plt.figure()
+    plt.plot(T, Z)
+    return T, Z
