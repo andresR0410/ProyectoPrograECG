@@ -219,10 +219,20 @@ HRbut= tk.Checkbutton(master=window, height= 3, width=9, highlightbackground='bl
 #Importar archivo
 def UploadAction(event=None):
     filename = tk.filedialog.askopenfilename()
-    #Unpackear los datos importados
-    """st.unpack()
-    plt.plot()"""
-    print('Selected:', filename)
+
+    datosX = open(filename, 'rb')
+    datosY = open(filename, 'rb')
+
+    Read_X = datosX.read()
+    Read_Y = datosY.read()
+
+    datosX.close()
+    datosY.close()
+
+    Data_X = np.array(st.unpack('d' * int(len(Read_X) / 8), Read_X))
+    Data_Y = np.array(st.unpack('d' * int(len(Read_Y) / 8), Read_Y))
+
+    print('Selected:', filename, Data_X, Data_Y)
 def ExportAction(event=None):
     datosXpack = st.pack(tiempo, double)
     datosYpack = st.pacj(datosZ, double)
