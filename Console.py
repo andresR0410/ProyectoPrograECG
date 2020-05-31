@@ -9,8 +9,9 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 import struct as st
+from PIL import Image, ImageTk
 """import WaveGenerator as WG
-import MetodosEcuaciones as ME
+import Ecuaciones as EC
 import PeakFinder as pkf"""
 
 window= tk.Tk()
@@ -31,10 +32,15 @@ def salir():
         window.destroy()
     else:
         messagebox.showinfo('Retornar', 'Será retornado a la aplicación')
-photo = tk.PhotoImage(file = "Boton-salir.png")
-photoimage = photo.subsample(20, 20)
-botonsalida = tk.Button(master= window, image=photoimage, command= salir, padx=True, pady=True, bg='red')
+photo_salir = tk.PhotoImage(file = "Boton-salir.png")
+photoimage_salir = photo_salir.subsample(20, 20)
+botonsalida = tk.Button(master= window, image=photoimage_salir, command= salir, padx=True, pady=True, bg='red')
 botonsalida.place(x=5, y=0)
+
+corazon = Image.open('Cora.jpg')
+cora_resized = corazon.resize((100,100))
+cora = ImageTk.PhotoImage(cora_resized)
+coraLabel = tk.Label(window, image=cora).place(x=550, y=30)
 
 #FRAME DE LOS PARÁMETROS
 parametros= tk.Frame(master=window)
@@ -66,7 +72,7 @@ metodos.config(bg="white", width=250, height=300,highlightbackground="black",hig
 FrCar = tk.IntVar()
 NLatidos= tk.IntVar()
 FrMu= tk.IntVar()
-Morfo= tk.IntVar()
+Morfodat= tk.IntVar()
 
 def obtener():
     FC= FrCar.get()
@@ -81,7 +87,7 @@ def obtener():
     # aca debemos usar la función
     FM.set(FrMu1)
 
-    Mor= Morfo.get()
+    Mor= Morfodat.get()
     # aca debemos usar la función
     M.set(Mor)
 
@@ -107,7 +113,7 @@ FMu = tk.Button(master=parametros, textvariable = FM,text="FM= ", command = obte
 c = tk.Label(master= parametros, text="F. MUESTREO", fg="black", bg='orange', highlightbackground="black",highlightthickness=3).place(x=70, y=110)
 
 
-Morfo = tk.Spinbox(master=parametros, from_=0, to=300, textvariable =Morfo , width = 5).place(x=170, y=150)
+Morfo = tk.Spinbox(master=parametros, from_=0, to=300, textvariable =Morfodat , width = 5).place(x=170, y=150)
 Morfologia = tk.Button(master=parametros, textvariable = M,text="FM= ", command = obtener, width = 3).place(x=20, y=150)
 d = tk.Label(master=parametros, text="MORFOLOGÍA", fg="black", bg='orange', highlightbackground="black",highlightthickness=2).place(x=70, y=150)
 
@@ -142,9 +148,8 @@ for r in range(1, 3):
     for c in range(1, 6):
         cell = tk.Entry(ab, width=5)
         cell.grid(row=r, column=c)
+
 #Botones para elegir el método de solución
-
-
 root = tk.Frame(master=metodos)
 root.place(x=0,y=0)
 root.config(width=240, height=290, bg='white')
@@ -190,16 +195,26 @@ R5 = tk.Checkbutton(master=root, text="Runge-Kutta 4", command=sel,bg='lightgree
                     onvalue=True, offvalue=False, variable=RK4)
 R5.place(x=50, y=220)
 
-
 #Heart rate
+findHR=tk.BooleanVar()
+HR=tk.DoubleVar()
+def findHR(): #Revisar para que botón de hallar HR funcione
+    print('entré')
+    if FrCar.get()!=0:
+        print('volví a entrar')
+        HR=FrCar.get()
+        print(HR)
+    else:
+        print('entré pero solo una')
+        pass
+        #HR = EC.HR(FM.get())
+    HRbutShow = tk.Label(master=window, height=1, width=4, highlightbackground='black',
+                             highlightthickness=2, bg="grey", textvariable=HR).place(x=23, y=260)
 
-HRbut= tk.Button(master=window, height= 3, width=9, highlightbackground='black',
-                   highlightthickness=2, bg= "orange", text= "Hallar HR").place(x=5,y=200)
-framHR= tk.Frame(master=window)
-framHR.config(height= 40, width=50, highlightbackground='black', highlightthickness=2)
-framHR.place(x=85, y=205)
-
-#Importar  exportar archivos
+HRbut= tk.Checkbutton(master=window, height= 3, width=9, highlightbackground='black', command=findHR,
+                   highlightthickness=2, bg= "orange", text= "Hallar HR", variable=findHR,
+                      onvalue=True, offvalue=False).place(x=5,y=200)
+#Exportar archivos
 
 #Importar archivo
 def UploadAction(event=None):
@@ -208,17 +223,17 @@ def UploadAction(event=None):
     """st.unpack()
     plt.plot()"""
     print('Selected:', filename)
+def ExportAction(event=None):
+    datosXpack = st.pack(tiempo, double)
+    datosYpack = st.pacj(datosZ, double)
+    print('Exporting:',datosXpack, datosYpack)
+importButton = tk.Button(window, text='Importar datos', command=UploadAction, height=3, width=11, relief='raised',bg='lightgreen')
+importButton.place(x=10, y=100)
 
-button = tk.Button(window, text='Import file', command=UploadAction, height=3, width=9, highlightbackground='black',
-                   highlightthickness=2, relief='raised', bg='lightgreen')
-button.place(x=5, y=100)
+exportButton = tk.Button(window, text='Exportar datos', command=ExportAction, height=3, width=11,relief='raised', bg='lightgreen')
+exportButton.place(x=10, y=40)
 
 # Procesar parámetros dados
 
-from tkinter import *
-from PIL import Image, ImageTk
-
-img = ImageTk.PhotoImage(Image.open("cora.jpg"))
-lab= Label(image=photo).place(x=50,y=50)
 
 window.mainloop()
