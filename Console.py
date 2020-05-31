@@ -117,19 +117,7 @@ Morfo = tk.Spinbox(master=parametros, from_=0, to=300, textvariable =Morfodat , 
 Morfologia = tk.Button(master=parametros, textvariable = M,text="FM= ", command = obtener, width = 3).place(x=20, y=150)
 d = tk.Label(master=parametros, text="MORFOLOGÍA", fg="black", bg='orange', highlightbackground="black",highlightthickness=2).place(x=70, y=150)
 
-#ECG
-"""def ECG():
-    PUES FALTA TODOJAJA
-    fig = plt.Figure(figsize=(4, 2), dpi=100)
-    t = np.arange(0,10, 0.01)
-    fig.add_subplot(111).plot(t, fun(t))     # subplot(filas, columnas, item)
-    fig.suptitle(opcion.get())
 
-    plt.close()
-    plt.style.use('seaborn-darkgrid')
-
-    Plot = FigureCanvasTkAgg(fig, master=window)
-    Plot.draw()"""
 
 #Tabla ai, bi
 ab = tk.Frame(master=puntos)
@@ -198,6 +186,7 @@ R5.place(x=50, y=220)
 #Heart rate
 findHR=tk.BooleanVar()
 HR=tk.DoubleVar()
+
 def findHR(): #Revisar para que botón de hallar HR funcione
     print('entré')
     if FrCar.get()!=0:
@@ -214,9 +203,16 @@ def findHR(): #Revisar para que botón de hallar HR funcione
 HRbut= tk.Checkbutton(master=window, height= 3, width=9, highlightbackground='black', command=findHR,
                    highlightthickness=2, bg= "orange", text= "Hallar HR", variable=findHR,
                       onvalue=True, offvalue=False).place(x=5,y=200)
-#Exportar archivos
+
+
+# IMPORTAR Y EXPORTAR:
+#INSTRUCCIÓN:
+"""El usuario podrá exportar y cargar los datos obtenidos en un archivo binario, que
+contendrá los datos de la gráfica y un encabezado en formato texto (txt) con los parámetros
+de configuración del modelo."""
 
 #Importar archivo
+
 def UploadAction(event=None):
     filename = tk.filedialog.askopenfilename()
 
@@ -226,24 +222,73 @@ def UploadAction(event=None):
     Read_X = datosX.read()
     Read_Y = datosY.read()
 
+
     datosX.close()
     datosY.close()
 
-    Data_X = np.array(st.unpack('d' * int(len(Read_X) / 8), Read_X))
-    Data_Y = np.array(st.unpack('d' * int(len(Read_Y) / 8), Read_Y))
+    DatosZ = np.array(st.unpack('d' * int(len(Read_X) / 8), Read_X))
+    Tiempo = np.array(st.unpack('d' * int(len(Read_Y) / 8), Read_Y))
 
-    print('Selected:', filename, Data_X, Data_Y)
-def ExportAction(event=None):
-    datosXpack = st.pack(tiempo, double)
-    datosYpack = st.pacj(datosZ, double)
-    print('Exporting:',datosXpack, datosYpack)
+    print('Selected:', filename, DatosZ, Tiempo)
+#respectivo botón:
 importButton = tk.Button(window, text='Importar datos', command=UploadAction, height=3, width=11, relief='raised',bg='lightgreen')
 importButton.place(x=10, y=100)
 
+#Exportar archivos
+
+#GUARDAR PARAMETROS EN STRING
+parametros= "Frecuencia Cardiaca, # de latidos, Frecuencia Muestreo y Factor de Ruido"
+
+def ExportAction(event=None):
+    datosXpack = st.pack(tiempo, double)
+    datosYpack = st.pack(datosZ, double)
+    encabezado = st.pack(parametros, char)
+    print('Exporting:',datosXpack, datosYpack, encabezado)
+
+#respectivo botón:
 exportButton = tk.Button(window, text='Exportar datos', command=ExportAction, height=3, width=11,relief='raised', bg='lightgreen')
 exportButton.place(x=10, y=40)
 
 # Procesar parámetros dados
+#ECG generar el plot
+"""def ECG():
+    PUES FALTA TODOJAJA
+    fig = plt.Figure(figsize=(4, 2), dpi=100)
+    t = np.arange(0,10, 0.01)
+    fig.add_subplot(111).plot(t, fun(t))     # subplot(filas, columnas, item)
+    fig.suptitle(opcion.get())
 
+    plt.close()
+    plt.style.use('seaborn-darkgrid')
+
+    Plot = FigureCanvasTkAgg(fig, master=window)
+    Plot.draw()"""
+
+
+#hallar HR función
+import numpy as np
+
+#instrucción:
+"""Al oprimir el botón ‘HR’ (heart rate) se debe mostrar el promedio de latidos por minuto
+que arroja la función de frecuencia cardiaca. Esta función debe recibir como parámetro un
+vector asociado (MANUELA: ÓSEA LOS DATOS E Z?) a un registro ECG que le permita identificar los picos de las ondas R de una
+señal. Consideraciones para crear función:"""
+
+datosZ= """ecg[:]""" #de aquí obtenemos Z, para hallar HR desde el ECG generado
+
+#encontrar picos para hallar frecuencia cardíaca desde el ECG
+def HR("""frecuencia_muestreo""" FrMu1,datosZ):
+    frecuencia_muestreo= FrMu1
+    time= datosZ/ frecuencia_muestreo
+    peaks, properties = find_peaks(ecg, height=0.5, width=5)  # para encontrar solo las ondas R, cada latido
+    time_ecg = time[peaks]
+    time_ecg = time_ecg[1:0]
+    # distancia entre picos
+    taco = np.diff(time_ecg)  # la diferencia en el tiempo
+    tacobpm = taco / 60  # paso de segundos a minutos
+
+    # la frecuencia se da:
+    HR = np.mean(tacobpm) #la media del taco de BPM
+    return HR
 
 window.mainloop()
