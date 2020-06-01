@@ -1,7 +1,4 @@
-#TODO: Exportar archivos binarios con datos de gráfica
-#TODO: Desempaquetar archivos en binario importados y graficar
 #TODO: LLamar funciones de ecuaciones para resolver
-#TODO: Botón de calcular Heart Rate (if parametros, FC.get(), findpeaks())
 
 """Interacción con usuario, pide parámetros para la generación de la señal del ECG, llama las funciones de WaveGenerator
 y retorna el resultado."""
@@ -69,10 +66,10 @@ metodos.config(bg="white", width=250, height=300,highlightbackground="black",hig
 - Frecuencia de muestreo
 - Morfología de la forma de onda (valores de , y )."""
 
-FrCar = tk.IntVar()
-NLatidos= tk.IntVar()
-FrMu= tk.IntVar()
-Morfodat= tk.IntVar()
+FrCar = tk.DoubleVar()
+NLatidos= tk.DoubleVar()
+FrMu= tk.DoubleVar()
+Morfodat= tk.DoubleVar()
 
 def obtener():
     FC= FrCar.get()
@@ -91,10 +88,10 @@ def obtener():
     # aca debemos usar la función
     M.set(Mor)
 
-FCRes= tk.IntVar()
-Lat= tk.IntVar()
-FM= tk.IntVar()
-M= tk.IntVar()
+FCRes= tk.DoubleVar()
+Lat= tk.DoubleVar()
+FM= tk.DoubleVar()
+M= tk.DoubleVar()
 
 tit= tk.Label(master= parametros, text= "PARÁMETROS", fg="black", bg='white', highlightbackground='black', highlightthickness=2).place(x=80, y=5)
 
@@ -186,18 +183,29 @@ R5.place(x=50, y=220)
 #Heart rate
 findHR=tk.BooleanVar()
 HR=tk.DoubleVar()
+#hallar HR función
+"""Al oprimir el botón ‘HR’ (heart rate) se debe mostrar el promedio de latidos por minuto
+que arroja la función de frecuencia cardiaca. Esta función debe recibir como parámetro un
+vector asociado (MANUELA: ÓSEA LOS DATOS E Z? SI) a un registro ECG que le permita identificar los picos de las ondas R de una
+señal. Consideraciones para crear función:"""
 
-def findHR(): #Revisar para que botón de hallar HR funcione
-    print('entré')
-    if FrCar.get()!=0:
-        print('volví a entrar')
-        HR=FrCar.get()
-        print(HR)
-    else:
-        print('entré pero solo una')
-        pass
-        #HR = EC.HR(FM.get())
-    HRbutShow = tk.Label(master=window, height=1, width=4, highlightbackground='black',
+datosZ= """ecg[:]""" #de aquí obtenemos Z, para hallar HR desde el ECG generado
+
+#encontrar picos para hallar frecuencia cardíaca desde el ECG
+def HR(FrMu1,datosZ):
+    frecuencia_muestreo= FrMu1
+    time= datosZ/ frecuencia_muestreo
+    peaks, properties = find_peaks(ecg, height=0.5, width=5)  # para encontrar solo las ondas R, cada latido
+    time_ecg = time[peaks]
+    time_ecg = time_ecg[1:0]
+    # distancia entre picos
+    taco = np.diff(time_ecg)  # la diferencia en el tiempo
+    tacobpm = taco / 60  # paso de segundos a minutos
+    # la frecuencia se da:
+    HR = np.mean(tacobpm) #la media del taco de BPM
+    return HR
+
+HRbutShow = tk.Label(master=window, height=1, width=4, highlightbackground='black',
                              highlightthickness=2, bg="grey", textvariable=HR).place(x=23, y=260)
 
 HRbut= tk.Checkbutton(master=window, height= 3, width=9, highlightbackground='black', command=findHR,
@@ -265,30 +273,6 @@ exportButton.place(x=10, y=40)
     Plot.draw()"""
 
 
-#hallar HR función
-import numpy as np
 
-#instrucción:
-"""Al oprimir el botón ‘HR’ (heart rate) se debe mostrar el promedio de latidos por minuto
-que arroja la función de frecuencia cardiaca. Esta función debe recibir como parámetro un
-vector asociado (MANUELA: ÓSEA LOS DATOS E Z?) a un registro ECG que le permita identificar los picos de las ondas R de una
-señal. Consideraciones para crear función:"""
-
-datosZ= """ecg[:]""" #de aquí obtenemos Z, para hallar HR desde el ECG generado
-
-#encontrar picos para hallar frecuencia cardíaca desde el ECG
-def HR("""frecuencia_muestreo""" FrMu1,datosZ):
-    frecuencia_muestreo= FrMu1
-    time= datosZ/ frecuencia_muestreo
-    peaks, properties = find_peaks(ecg, height=0.5, width=5)  # para encontrar solo las ondas R, cada latido
-    time_ecg = time[peaks]
-    time_ecg = time_ecg[1:0]
-    # distancia entre picos
-    taco = np.diff(time_ecg)  # la diferencia en el tiempo
-    tacobpm = taco / 60  # paso de segundos a minutos
-
-    # la frecuencia se da:
-    HR = np.mean(tacobpm) #la media del taco de BPM
-    return HR
 
 window.mainloop()
