@@ -1,27 +1,6 @@
 import scipy.optimize as opt
 import scipy.integrate as inte
-import numpy as np
-import math as mt
-import matplotlib.pyplot as plt
 
-#encontrar picos para hallar frecuencia cardíaca desde el ECG
-def HR(frecuencia_muestreo):
-    time= """electrocardiograma""" / frecuencia_muestreo
-    peaks, properties = find_peaks(ecg, height=0.5, width=5)  # para encontrar solo las ondas R, cada latido
-    time_ecg = time[peaks]
-    time_ecg = time_ecg[1:0]
-
-    """plt.plot(time_ecg, ecg)
-    plt.plot(peaks/frecuencia_muestreo, ecg[peaks], "oc")  # peaks son indices dónde están los picos
-    plt.show()"""
-
-    # distancia entre picos
-    taco = np.diff(time_ecg)  # la diferencia en el tiempo
-    tacobpm = taco / 60  # paso de segundos a minutos
-
-    # la frecuencia se da:
-    HR = np.mean(tacobpm)
-    return HR
 ##
 import scipy.optimize as opt
 import scipy.integrate as inte
@@ -55,6 +34,7 @@ def dz(x, y, z, t):
         zt = z - z0
     res = suma - zt
     return -res
+
 def EulerFoward(x0, y0, z0, t0, t, h, dx, dy, dz):
     T = np.arange(t0, t + h, h)
     tam = np.size(T)
@@ -88,3 +68,23 @@ def EulerBack(x0, y0, z0, t0, t, h, dx, dy, dz):
     plt.figure()
     plt.plot(T, Z)
     return T, Z
+##RK2method
+t0=0
+t= 120
+h= 0.1
+th= np.arange(t0, t + h, h)
+yrk2= np.zeros(len(th))
+YO= 0.01
+yrk2[0, YO]
+def f(t, y):
+    return ("""NIDEA""")
+for i in range (0,len(th)):
+    k1= f(th, yrk2[i-1])
+    k2= f(th+ h/2, yrk2[i-1]+ h*k1/2)
+    k3= f(th+h/2, yrk2[i-1]+ h*k2/2)
+    k4= f(th+h, yrk2[i-1]+ h*k3)
+    yrk2[i]= yrk2[i-1] + (h/6)* (k1 + 2*k2 + 2*k3 + k4)
+#para confimar:
+plt.figure()
+plt.plot(th, YRK2)
+
