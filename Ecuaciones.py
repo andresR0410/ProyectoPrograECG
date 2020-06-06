@@ -51,7 +51,7 @@ def EulerFoward(x0, y0, z0, h):
     for i in range(1, tam):
         X[i] = X[i-1] + h * (dx(X[i-1],ti[i-1],Y[i-1]))
         Y[i] = Y[i - 1] + h * (dy(X[i - 1], ti[i-1], Y[i - 1]))
-        Z[i] = Z[i - 1] + h * (dz(X[i - 1], Y[i-1], Z[i-1], Ti[i-1]))
+        Z[i] = Z[i - 1] + h * (dz(X[i - 1], Y[i-1], Z[i-1], Ti[i-1],thi))
     return Z
 
 def EulerBackRoot(yt2, t2, xt1, yt1, zt1, h, Ti, thi):
