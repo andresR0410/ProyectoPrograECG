@@ -120,37 +120,34 @@ def RK4(ti, Ti, h1, thi):
     y1rk4= np.zeros(len(ti))
     y2rk4= np.zeros(len(ti))
     y3rk4= np.zeros(len(ti))
-
-
     Y0= 0
     X0=1
     Z0=0.04
     y1rk4[0]= X0
     y2rk4[0]= Y0
     y3rk4[0]= Z0
-    h= 1/300
 
     for i in range (0,len(ti)):
-        k11_= dx(ti[i], y1rk2[i-1], y2rk2[i-1])
-        k21_= dy(ti[i], y1rk2[i-1], y2rk2[i-1])
-        k31_= dz(Ti[i], y1rk2[i-1], y2rk2[i-1], y3rk2[i-1])
+        k11_= dx(ti[i], y1rk4[i-1], y2rk4[i-1])
+        k21_= dy(ti[i], y1rk4[i-1], y2rk4[i-1])
+        k31_= dz(Ti[i], y1rk4[i-1], y2rk4[i-1], y3rk4[i-1], thi)
 
-        k12_= dx(ti[i]+h1/2, y2rk2[i - 1] + k11_ * h1/2, y2rk2[i - 1] + h1/2 * k21_)
-        k22_= dy(ti[i]+h1/2, y2rk2[i - 1] + k11_ * h1/2, y2rk2[i - 1] + h1/2 * k21_)
-        k32_= dz(Ti[i]+h1/2, y2rk2[i - 1] + k11_ * h1/2, y2rk2[i - 1] + h1/2 * k21_, y3rk2[i-1] + k31_*h1/2, thi)
+        k12_= dx(ti[i]+h1/2, y2rk4[i - 1] + k11_ * h1/2, y2rk4[i - 1] + h1/2 * k21_)
+        k22_= dy(ti[i]+h1/2, y2rk4[i - 1] + k11_ * h1/2, y2rk4[i - 1] + h1/2 * k21_)
+        k32_= dz(Ti[i]+h1/2, y2rk4[i - 1] + k11_ * h1/2, y2rk4[i - 1] + h1/2 * k21_, y3rk4[i-1] + k31_*h1/2, thi)
 
-        k13_=  dx(ti[i]+h1/2, y2rk2[i - 1] + k12_ * h1/2, y2rk2[i - 1] + h1/2 * k22_)
-        k23_=  dy(ti[i]+h1/2, y2rk2[i - 1] + k12_ * h1/2, y2rk2[i - 1] + h1/2 * k22_)
-        k33_=  dz(Ti[i]+h1/2, y2rk2[i - 1] + k12_ * h1/2, y2rk2[i - 1] + h1/2 * k22_, y3rk4[i-1] + h1/2 * k32_, thi)
+        k13_=  dx(ti[i]+h1/2, y2rk4[i - 1] + k12_ * h1/2, y2rk4[i - 1] + h1/2 * k22_)
+        k23_=  dy(ti[i]+h1/2, y2rk4[i - 1] + k12_ * h1/2, y2rk4[i - 1] + h1/2 * k22_)
+        k33_=  dz(Ti[i]+h1/2, y2rk4[i - 1] + k12_ * h1/2, y2rk4[i - 1] + h1/2 * k22_, y3rk4[i-1] + h1/2 * k32_, thi)
 
-        k14_=  dx(ti[i]+h1, y2rk2[i - 1] + k13_ * h1, y2rk2[i - 1] + h1 * k23_)
-        k24_=  dy(ti[i]+h1, y2rk2[i - 1] + k13_ * h1, y2rk2[i - 1] + h1 * k23_)
-        k34_=  dz(Ti[i]+h1, y2rk2[i - 1] + k13_ * h1, y2rk2[i - 1] + h1* k23_, y3rk4[i-1]+ h1*k33_, thi)
+        k14_=  dx(ti[i]+h1, y2rk4[i - 1] + k13_ * h1, y2rk4[i - 1] + h1 * k23_)
+        k24_=  dy(ti[i]+h1, y2rk4[i - 1] + k13_ * h1, y2rk4[i - 1] + h1 * k23_)
+        k34_=  dz(Ti[i]+h1, y2rk4[i - 1] + k13_ * h1, y2rk4[i - 1] + h1* k23_, y3rk4[i-1]+ h1*k33_, thi)
 
 
-        y1rk4[i]= y1rk2[i-1] + (h1/6)* (k11_ + 2*k12_ + 2*k13_+ k14_ )
-        y2rk4[i]= y2rk2[i-1] + (h1/6)* (k21_ + 2*k22_ +2*k23_+ k24_ )
-        y3rk4[i] = y3rk2[i - 1] + (h1 / 6) * (k31_ + 2*k32_ + 2*k33_ + k34_)
+        y1rk4[i]= y1rk4[i-1] + (h1/6)* (k11_ + 2*k12_ + 2*k13_+ k14_ )
+        y2rk4[i]= y2rk4[i-1] + (h1/6)* (k21_ + 2*k22_ +2*k23_+ k24_ )
+        y3rk4[i] = y3rk4[i - 1] + (h1 / 6) * (k31_ + 2*k32_ + 2*k33_ + k34_)
 
     return y3rk4
 
