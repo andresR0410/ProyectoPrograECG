@@ -4,12 +4,12 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 import struct as st
-from PIL import Image, ImageTk
+#from PIL import Image, ImageTk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import numpy as np
 import scipy.optimize as opt
-from pandas import DataFrame
+from scipy.signal import find_peaks
 
 
 window= tk.Tk()
@@ -35,10 +35,10 @@ photoimage_salir = photo_salir.subsample(20, 20)
 botonsalida = tk.Button(master= window, image=photoimage_salir, command= salir, padx=True, pady=True, bg='red')
 botonsalida.place(x=5, y=0)
 
-corazon = Image.open('Cora.jpg')
+"""corazon = Image.open('Cora.jpg')
 cora_resized = corazon.resize((100,100))
 cora = ImageTk.PhotoImage(cora_resized)
-coraLabel = tk.Label(window, image=cora).place(x=580, y=30)
+coraLabel = tk.Label(window, image=cora).place(x=580, y=30)"""
 
 #FRAME DE LOS PARÁMETROS
 parametros= tk.Frame(master=window)
@@ -383,7 +383,27 @@ def RK4(ti, Ti,h1):
         y2rk4[i]= y2rk4[i-1] + (h1/6)* (k21_ + 2*k22_ +2*k23_+ k24_ )
         y3rk4[i] = y3rk4[i - 1] + (h1 / 6) * (k31_ + 2*k32_ + 2*k33_ + k34_)
     return y3rk4
+#funcion de encontrar picos
+#Heart rate
+HR=tk.DoubleVar() #al oprimir el botón ‘HR’ (heart rate) se debe mostrar el promedio de latidos por minuto
+"""que arroja la función de frecuencia cardiaca. Esta función debe recibir como parámetro un
+vector asociado (MANUELA: ÓSEA LOS DATOS E Z? SI) a un registro ECG que le permita identificar los picos de las ondas R de una
+señal. Consideraciones para crear función:"""
 
+
+def findHR(FrMu1,X):
+    frecuencia_muestreo= FrMu1
+    time= np.arange(np.size(X))/ frecuencia_muestreo
+
+    peaks, _ = find_peaks(X, height=0.5, width=5)  # para encontrar solo las ondas R, cada latido
+    time_ecg = time[peaks]
+    time_ecg = time_ecg[1:0]
+    # distancia entre picos
+    taco = np.diff(time_ecg)  # la diferencia en el tiempo
+    tacobpm = taco / 60  # paso de segundos a minutos
+    # la frecuencia se da:
+    HR = np.mean(tacobpm) #la media del taco de BPM
+    return HR
 # puntos iniciales
 def plotear_metodos():
     fig = Figure(figsize=(4, 3), dpi=80)
@@ -408,9 +428,21 @@ def plotear_metodos():
         fig.add_subplot(111).plot(Ti,ZRK2)
     if RK4val.get():
         fig.add_subplot(111).plot(Ti,ZRK4)
-    canvas = FigureCanvasTkAgg(fig, window)
-    canvas.draw()
-    canvas.get_tk_widget().place(x=130, y=60)
+
+    # encontrar picos para hallar frecuencia cardíaca desde el ECG
+X= [0.0,LPM+h]
+HRbutShow = tk.Label(master=window, height=1, width=4, highlightbackground='black',
+                     highlightthickness=2, bg="grey", textvariable=findHR(fm, X)).place(x=23, y=260)
+
+HRbutton = tk.Checkbutton(master=window, height=3, width=9, highlightbackground='black', command=findHR,
+                       highlightthickness=2, bg="orange", text="Hallar HR", variable=findHR(fm, X),
+                       onvalue=True, offvalue=False).place(x=5, y=200)
+
+#canvas = FigureCanvasTkAgg(fig, window)
+#canvas.draw()
+#canvas.get_tk_widget().place(x=130, y=60)
+
+
 
 R1 = tk.Checkbutton(master=root, text="Euler hacia adelante", command= plotear_metodos,bg='lightgreen',
                     onvalue=True, offvalue=False, variable=EuAd)
@@ -431,34 +463,6 @@ R4.place(x=50, y=176)
 R5 = tk.Checkbutton(master=root, text="Runge-Kutta 4", command=plotear_metodos, bg='lightgreen',
                     onvalue=True, offvalue=False, variable=RK4val)
 R5.place(x=50, y=220)
-#Heart rate
-HR=tk.DoubleVar()
-"""Al oprimir el botón ‘HR’ (heart rate) se debe mostrar el promedio de latidos por minuto
-que arroja la función de frecuencia cardiaca. Esta función debe recibir como parámetro un
-vector asociado (MANUELA: ÓSEA LOS DATOS E Z? SI) a un registro ECG que le permita identificar los picos de las ondas R de una
-señal. Consideraciones para crear función:"""
-"""datosZ= ecg[:] #de aquí obtenemos Z, para hallar HR desde el ECG generado
-#encontrar picos para hallar frecuencia cardíaca desde el ECG
-def findHR(FrMu1,datosZ):
-    frecuencia_muestreo= FrMu1
-    time= datosZ/ frecuencia_muestreo
-    peaks, properties = find_peaks(ecg, height=0.5, width=5)  # para encontrar solo las ondas R, cada latido
-    time_ecg = time[peaks]
-    time_ecg = time_ecg[1:0]
-    # distancia entre picos
-    taco = np.diff(time_ecg)  # la diferencia en el tiempo
-    tacobpm = taco / 60  # paso de segundos a minutos
-    # la frecuencia se da:
-    HR = np.mean(tacobpm) #la media del taco de BPM
-    return HR
-
-HRbutShow = tk.Label(master=window, height=1, width=4, highlightbackground='black',
-                             highlightthickness=2, bg="grey", textvariable=findHR(fm,float(datosZ))).place(x=23, y=260)
-
-HRbut= tk.Checkbutton(master=window, height= 3, width=9, highlightbackground='black', command=findHR,
-                   highlightthickness=2, bg= "orange", text= "Hallar HR", variable=findHR(fm,float(datosZ)),
-                      onvalue=True, offvalue=False).place(x=5,y=200)
-"""
 
 # IMPORTAR Y EXPORTAR:
 #INSTRUCCIÓN:
