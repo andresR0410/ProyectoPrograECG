@@ -1,26 +1,30 @@
-##
-
 import scipy.optimize as opt
 import matplotlib.pyplot as plt
 import numpy as np
+import Console
 
-fm= 300 #frecuencia muestreo
-f= 80 #frecuencia cardiaca
-LPM = 30 #latidos por min
-ai = [1.2, -5.0, 30.0, -7.5, 0.75]
-bi = [0.25, 0.1, 0.1, 0.1, 0.4]
+parametros_val = Console.parametros_val
+if parametros_val:
+    fm = float(parametros_val[2])
+    f = float(parametros_val[0])
+    LPM = float(parametros_val[1])
+    FR = float(parametros_val[-1])
+else:
+    fm= 300 #frecuencia muestreo
+    f= 80 #frecuencia cardiaca
+    LPM = 30 #latidos por min
+    FR = 0.02
 
-# puntos iniciales
-h= 1/fm
+ai = Console.ai_valores
+bi = Console.bi_valores
+h = 1 / fm
 pi = np.pi
 thi = [-pi / 3, -pi / 12, 0, pi / 12, pi / 2]
-
-X0= 1.0
-Y0= 0.0
-Z0= 0.04
-Ti = np.arange(0.0, LPM+ h, h)
-ti = np.random.normal(60/f, 0.05*(60/f), len(Ti))
-
+X0 = 1.0
+Y0 = 0.0
+Z0 = 0.04
+Ti = np.arange(0.0, LPM + h, h)
+ti = np.random.normal(60 / f, 0.05 * (60 / f), len(Ti))
 def dx(ti, x, y):
     alpha = (1.0 - np.sqrt((x**2.0) + (y**2.0)))
     w = 2.0*np.pi* (1/ti)
@@ -36,7 +40,7 @@ def dz(t, x, y, z):
         ECG += -(ai[i] * (np.fmod(np.arctan2(y, x) - thi[i], 2 * np.pi)) * np.exp(
             -((np.fmod(np.arctan2(y, x) - thi[i], 2 * np.pi)) ** 2) / (2 * (bi[i] ** 2))))
     return ECG - (z - z0)
-def EulerFoward(x0, y0, z0, h):
+def EulerForward(x0, y0, z0, h):
     tam = np.size(Ti)
     X = np.zeros(tam)
     Y = np.zeros(tam)
@@ -156,12 +160,12 @@ def RK4(ti, Ti,h1):
 
     return y3rk4
 
-plt.figure()
-plt.plot(Ti, RK2(ti,Ti,h)+ np.random.normal(0.01, 0.05*0.01, len(Ti)),"red")
-plt.plot(Ti, EulerBack()+ np.random.normal(0.01, 0.05*0.01, len(Ti)), "black")
-plt.plot(Ti, RK4(ti,Ti,h)+ np.random.normal(0.01, 0.05*0.01, len(Ti)),"blue")
-plt.plot(Ti, EulerFoward(X0, Y0, Z0, h)+ np.random.normal(0.01, 0.05*0.01, len(Ti)), "yellow")
-plt.plot(Ti, EulerMod(X0,Y0,Z0,h,Ti,ti)+ np.random.normal(0.01, 0.05*0.01, len(Ti)), "purple")
+"""plt.figure()
+plt.plot(Ti, RK2(ti,Ti,h)+ np.random.normal(FR, 0.05*FR, len(Ti)),"red")
+plt.plot(Ti, EulerBack()+ np.random.normal(FR, 0.05*FR, len(Ti)), "black")
+plt.plot(Ti, RK4(ti,Ti,h)+ np.random.normal(FR, 0.05*FR, len(Ti)),"blue")
+plt.plot(Ti, EulerFoward(X0, Y0, Z0, h)+ np.random.normal(FR, 0.05*FR, len(Ti)), "yellow")
+plt.plot(Ti, EulerMod(X0,Y0,Z0,h,Ti,ti)+ np.random.normal(FR, 0.05*FR, len(Ti)), "purple")
 plt.legend(['RK2', "EulerBack","RK4","EulerFor", "EulerMod"])
 plt.title("ecg")
-plt.show()
+plt.show()"""
