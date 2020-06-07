@@ -192,7 +192,7 @@ señal. Consideraciones para crear función:"""
 datosZ= """ecg[:]""" #de aquí obtenemos Z, para hallar HR desde el ECG generado
 
 #encontrar picos para hallar frecuencia cardíaca desde el ECG
-def HR(FrMu1,datosZ):
+def findHR(FrMu1,datosZ):
     frecuencia_muestreo= FrMu1
     time= datosZ/ frecuencia_muestreo
     peaks, properties = find_peaks(ecg, height=0.5, width=5)  # para encontrar solo las ondas R, cada latido
