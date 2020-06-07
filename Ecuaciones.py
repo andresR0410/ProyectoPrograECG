@@ -1,9 +1,7 @@
 import scipy.optimize as opt
 import matplotlib.pyplot as plt
 import numpy as np
-import Console
 
-parametros_val = Console.parametros_val
 if parametros_val:
     fm = float(parametros_val[2])
     f = float(parametros_val[0])
