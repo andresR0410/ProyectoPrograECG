@@ -50,10 +50,10 @@ def EulerFoward(x0, y0, z0, h):
         Z[i] = Z[i - 1] + h * (dz(Ti[i-1],X[i - 1], Y[i-1], Z[i-1]))
     return Z
 
-def EulerBackRoot(yt2, xt1, yt1, zt1, h, ti):
+def EulerBackRoot(yt2, t2, xt1, yt1, zt1, h, ti):
     return [xt1 + h * dx(ti, yt2[0], yt2[1]) - yt2[0],
             yt1 + h * dy(ti, yt2[0], yt2[1]) - yt2[1],
-            zt1 + h * dz(Ti, yt2[0], yt2[1], yt2[2]) - yt2[2]]
+            zt1 + h * dz(t2, yt2[0], yt2[1], yt2[2]) - yt2[2]]
 def EulerBack():
     tam = np.size(Ti)
     X = np.zeros(tam)
@@ -67,7 +67,7 @@ def EulerBack():
     Z[0] = Z0
     for i in range(1, tam):
         SolEulerBack= opt.fsolve(EulerBackRoot, np.array([X[i-1],Y[i-1], Z[i-1]]),
-                                 (Ti[i], X[i-1], Y[i-1], Z[i-1], h, Ti[i]))
+                                 (Ti[i], X[i-1], Y[i-1], Z[i-1], h, ti[i]))
         X[i] = SolEulerBack[0]
         Y[i] = SolEulerBack[1]
         Z[i] = SolEulerBack[2]
@@ -157,11 +157,11 @@ def RK4(ti, Ti,h1):
     return y3rk4
 
 plt.figure()
-plt.plot(Ti, RK2(ti,Ti,h),"red")
-plt.plot(Ti, EulerBack(), "black")
-plt.plot(Ti, RK4(ti,Ti,h),"blue")
-plt.plot(Ti, EulerFoward(X0, Y0, Z0, h), "yellow")
-plt.plot(Ti, EulerMod(X0,Y0,Z0,h,Ti,ti), "purple")
+plt.plot(Ti, RK2(ti,Ti,h)+ np.random.normal(0.01, 0.05*0.01, len(Ti)),"red")
+plt.plot(Ti, EulerBack()+ np.random.normal(0.01, 0.05*0.01, len(Ti)), "black")
+plt.plot(Ti, RK4(ti,Ti,h)+ np.random.normal(0.01, 0.05*0.01, len(Ti)),"blue")
+plt.plot(Ti, EulerFoward(X0, Y0, Z0, h)+ np.random.normal(0.01, 0.05*0.01, len(Ti)), "yellow")
+plt.plot(Ti, EulerMod(X0,Y0,Z0,h,Ti,ti)+ np.random.normal(0.01, 0.05*0.01, len(Ti)), "purple")
 plt.legend(['RK2', "EulerBack","RK4","EulerFor", "EulerMod"])
-plt.show()
 plt.title("ecg")
+plt.show()
