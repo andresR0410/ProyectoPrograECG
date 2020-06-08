@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 import struct as st
-#from PIL import Image, ImageTk
+from PIL import Image, ImageTk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import numpy as np
@@ -16,11 +16,9 @@ window= tk.Tk()
 window.geometry("1000x600")
 window.config(cursor="arrow")
 
-pf= tk.Label(
-	text= "Bienvenido al generador de señales de ECG",
+pf= tk.Label(text= "Bienvenido al generador de señales de ECG",
 	foreground="white",  # Set the text color to white
-    background="green"  # Set the background color to black
-)
+    background="green")  # Set the background color to black)
 pf.pack(fill=tk.X, side=tk.TOP)
 
 def salir():
@@ -35,10 +33,10 @@ photoimage_salir = photo_salir.subsample(20, 20)
 botonsalida = tk.Button(master= window, image=photoimage_salir, command= salir, padx=True, pady=True, bg='red')
 botonsalida.place(x=5, y=0)
 
-"""corazon = Image.open('Cora.jpg')
+corazon = Image.open('Cora.jpg')
 cora_resized = corazon.resize((100,100))
 cora = ImageTk.PhotoImage(cora_resized)
-coraLabel = tk.Label(window, image=cora).place(x=580, y=30)"""
+coraLabel = tk.Label(window, image=cora).place(x=580, y=30)
 
 #FRAME DE LOS PARÁMETROS
 parametros= tk.Frame(master=window)
@@ -65,57 +63,24 @@ metodos.config(bg="white", width=250, height=300,highlightbackground="black",hig
 - Frecuencia cardíaca media
 - Número de latidos
 - Frecuencia de muestreo
-- Morfología de la forma de onda (valores de , y )."""
-
-FrCar = tk.DoubleVar()
-NLatidos= tk.DoubleVar()
-FrMu= tk.DoubleVar()
-FacRuidat= tk.DoubleVar()
-
-def obtener():
-    pass
-    """FC= float(FrCar.get())
-    #aca debemos usar la función
-    float(FCRes.set(FC))
-    NLa= float(NLatidos.get())
-    # aca debemos usar la función
-    float(Lat.set(NLa))
-
-    FrMu1=  float(FrMu.get())
-    # aca debemos usar la función
-    float(FM.set(FrMu1))
-
-    Mor= float(FacRuidat.get())
-    # aca debemos usar la función
-    float(M.set(Mor))
-    return [FC, NLa, FrMu1,Mor]"""
-FCRes= tk.DoubleVar()
-Lat= tk.DoubleVar()
-FM= tk.DoubleVar()
-M= tk.DoubleVar()
-
+- Morfología de la forma de onda """
 tit= tk.Label(master= parametros, text= "PARÁMETROS", fg="black", bg='white', highlightbackground='black', highlightthickness=2).place(x=80, y=5)
-
-VFrCar = tk.Spinbox(master=parametros, from_=0, to=300, textvariable = FrCar, width = 5).place(x=170, y=30)
-FC = tk.Button(master=parametros, textvariable = FCRes,text="FC= ", command = obtener, width = 3).place(x=20, y=30)
-a = tk.Label(master= parametros, text="FC", fg="black", bg='orange', highlightbackground="black",highlightthickness=2).place(x=70, y=30)
-
-
-VLat = tk.Spinbox(master=parametros, from_=0, to=300, textvariable = NLatidos, width = 5).place(x=170, y=70)
-Latidos = tk.Button(master=parametros, textvariable = Lat,text="Lat= ", command = obtener, width = 3).place(x=20, y=70)
-b = tk.Label(master= parametros, text="LATIDOS", fg="black", bg='orange', highlightbackground="black",highlightthickness=2).place(x=70, y=70)
-
-
-VFM = tk.Spinbox(master=parametros, from_=0, to=300, textvariable =FrMu , width = 5).place(x=170, y=110)
-FMu = tk.Button(master=parametros, textvariable = FM,text="FM= ", command = obtener, width = 3).place(x=20, y=110)
-c = tk.Label(master= parametros, text="F. MUESTREO", fg="black", bg='orange', highlightbackground="black",highlightthickness=3).place(x=70, y=110)
-
-
-FacRui = tk.Spinbox(master=parametros, from_=0, to=300, textvariable =FacRuidat , width = 5).place(x=170, y=150)#Morfología se reifere a factor de ruido
-FactorRuido = tk.Button(master=parametros, textvariable = M,text="FM= ", command = obtener, width = 3).place(x=20, y=150)
-d = tk.Label(master=parametros, text="FACTOR RUIDO", fg="black", bg='orange', highlightbackground="black",highlightthickness=2).place(x=70, y=150)
-parametros_val = obtener()
-
+FC = tk.IntVar()
+FC.set(80)
+Lat = tk.IntVar()
+Lat.set(30)
+FM = tk.IntVar()
+FM.set(300)
+FR = tk.DoubleVar()
+FR.set(0.02)
+FrecCar = tk.Entry(master=parametros, textvariable=FC,width = 5).place(x=50, y=30)
+tk.Label(parametros, text='Frecuencia Cardiaca', bg='orange').place(x=110,y=30)
+Latidos = tk.Entry(master=parametros, textvariable=Lat,width = 5).place(x=50, y=70)
+tk.Label(parametros, text='Latidos', bg='orange').place(x=110,y=70)
+FrecMuest = tk.Entry(master=parametros, textvariable=FM, width=5).place(x=50, y=110)
+tk.Label(parametros, text='Frecuencia Muestreo', bg='orange').place(x=110,y=110)
+FacRuido = tk.Entry(master=parametros, textvariable=FR,width = 5).place(x=50, y=150)
+tk.Label(parametros, text='Factor Ruido', bg='orange').place(x=110,y=150)
 #Tabla ai, bi
 ab = tk.Frame(master=puntos)
 ab.place(x=5,y=5)
@@ -130,92 +95,54 @@ SFrame = tk.Label(master=ab,text='S', width=7, height=2,highlightbackground="bla
 TFrame = tk.Label(master=ab,text='T', width=7, height=2,highlightbackground="black", highlightthickness=2,relief='raised').grid(row=0,column=5)
 #Se crean los espacios para que el usuario ingrese los datos
 aip = tk.DoubleVar()
+aip.set(1.2)
 aiq = tk.DoubleVar()
+aiq.set(-5.0)
 air = tk.DoubleVar()
+air.set(30.0)
 ais = tk.DoubleVar()
+ais.set(-7.5)
 ait = tk.DoubleVar()
+ait.set(0.75)
 bip = tk.DoubleVar()
+bip.set(0.25)
 biq= tk.DoubleVar()
+biq.set(0.1)
 bir = tk.DoubleVar()
+bir.set(0.1)
 bis = tk.DoubleVar()
+bis.set(0.1)
 bit = tk.DoubleVar()
-
-def obtenerABi():
-    if aiP.get():
-        ai_p = float(aiP.get())
-    else:
-        ai_p= 1.2
-    if aiQ.get():
-        ai_q = float(aiQ.get())
-    else:
-        ai_q = -5.0
-    if aiR.get():
-        ai_r = float(aiR.get())
-    else:
-        ai_r = 30.0
-    if aiS.get():
-        ai_s = float(aiS.get())
-    else:
-        ai_s = -7.5
-    if aiT.get():
-        ai_t = float(aiT.get())
-    else:
-        ai_t = 0.75
-    if biP.get():
-        bi_p = float(biP.get())
-    else:
-        bi_p = 0.25
-    if biQ.get():
-        bi_q = float(biQ.get())
-    else:
-        bi_q = 0.1
-    if biR.get():
-        bi_r = float(biR.get())
-    else:
-        bi_r = 0.1
-    if biS.get():
-        bi_s = float(biS.get())
-    else:
-        bi_s = 0.1
-    if biT.get():
-        bi_t = float(biT.get())
-    else:
-        bi_t = 0.4
+bit.set(0.4)
+def obtener():
+    ai_p = float(aip.get())
+    ai_q = float(aiq.get())
+    ai_r = float(air.get())
+    ai_s = float(ais.get())
+    ai_t = float(ait.get())
+    bi_p = float(bip.get())
+    bi_q = float(biq.get())
+    bi_r = float(bir.get())
+    bi_s = float(bis.get())
+    bi_t = float(bit.get())
     ai = [ai_p,ai_q, ai_r, ai_s, ai_t]
     bi = [bi_p,bi_q, bi_r, bi_s, bi_t]
-    return ai, bi
-aiP = tk.Entry(ab,width=5)
-aiP.grid(row=1, column=1)
-
-aiQ = tk.Entry(ab,width=5)
-aiQ.grid(row=1, column=2)
-
-aiR = tk.Entry(ab, width=5)
-aiR.grid(row=1, column=3)
-
-aiS = tk.Entry(ab,width=5)
-aiS.grid(row=1, column=4)
-
-aiT = tk.Entry(ab,width=5)
-aiT.grid(row=1, column=5)
-
-biP = tk.Entry(ab, width=5)
-biP.grid(row=2, column=1)
-
-biQ = tk.Entry(ab, width=5)
-biQ.grid(row=2, column=2)
-
-biR = tk.Entry(ab, width=5)
-biR.grid(row=2, column=3)
-
-biS = tk.Entry(ab, width=5)
-biS.grid(row=2, column=4)
-
-biT = tk.Entry(ab, width=5)
-biT.grid(row=2, column=5)
-ai_valores = obtenerABi()[0]
-bi_valores = obtenerABi()[1]
-
+    FrecCard=float(FC.get())
+    FrecMuestr = float(FM.get())
+    LatPM = float(Lat.get())
+    FactRui = float(FR.get())
+    parametros_val = [FrecCard, LatPM, FrecMuestr, FactRui]
+    return ai, bi, parametros_val
+aiP = tk.Entry(ab,width=5, textvariable=aip).grid(row=1, column=1)
+aiQ = tk.Entry(ab,width=5,textvariable=aiq).grid(row=1, column=2)
+aiR = tk.Entry(ab, width=5,textvariable=air).grid(row=1, column=3)
+aiS = tk.Entry(ab,width=5,textvariable=ais).grid(row=1, column=4)
+aiT = tk.Entry(ab,width=5,textvariable=ait).grid(row=1, column=5)
+biP = tk.Entry(ab, width=5,textvariable=bip).grid(row=2, column=1)
+biQ = tk.Entry(ab, width=5,textvariable=biq).grid(row=2, column=2)
+biR = tk.Entry(ab, width=5, textvariable=bir).grid(row=2, column=3)
+biS = tk.Entry(ab, width=5,textvariable=bis).grid(row=2, column=4)
+biT = tk.Entry(ab, width=5,textvariable=bit).grid(row=2, column=5)
 #Botones para elegir el método de solución
 root = tk.Frame(master=metodos)
 root.place(x=0,y=0)
@@ -228,20 +155,10 @@ EuAt=tk.BooleanVar()
 EuMod=tk.BooleanVar()
 RK2val=tk.BooleanVar()
 RK4val=tk.BooleanVar()
-
 #Condiciones a usar en los métodos e implementación de los mismos
-if parametros_val:
-    fm = float(parametros_val[2])
-    f = float(parametros_val[0])
-    LPM = float(parametros_val[1])
-    FR = float(parametros_val[-1])
-else:
-    fm= 300 #frecuencia muestreo
-    f= 80 #frecuencia cardiaca
-    LPM = 30 #latidos por min
-    FR = 0.02
-ai = ai_valores
-bi = bi_valores
+fm= float(FM.get())
+LPM = float(Lat.get())
+f = float(FC.get())
 h = 1 / fm
 pi = np.pi
 thi = [-pi / 3, -pi / 12, 0, pi / 12, pi / 2]
@@ -260,6 +177,8 @@ def dy(ti,x, y):
     return alpha*y + w*x
 def dz(t, x, y, z):
     ECG = 0
+    ai = obtener()[0]
+    bi = obtener()[1]
     z0 = 0.00015 * np.sin(2 * np.pi * 0.25 * t)
     for i in range(len(ai)):
         ECG += -(ai[i] * (np.fmod(np.arctan2(y, x) - thi[i], 2 * np.pi)) * np.exp(
@@ -301,7 +220,6 @@ def EulerBack():
         Y[i] = SolEulerBack[1]
         Z[i] = SolEulerBack[2]
     return Z
-
 def EulerModRoot(yt3, t1, t2, y1t1, y2t1, y3t1, h, ti):
     return [y1t1 + (h/2.0) * (dx(ti, yt3[0],yt3[1]) + dx(ti, y1t1,y2t1)) -
             yt3[0], y2t1 + (h / 2.0) * (dy(ti,y1t1, y2t1) + dy(ti,yt3[0], yt3[1])) -
@@ -385,64 +303,65 @@ def RK4(ti, Ti,h1):
     return y3rk4
 #funcion de encontrar picos
 #Heart rate
-HR=tk.DoubleVar() #al oprimir el botón ‘HR’ (heart rate) se debe mostrar el promedio de latidos por minuto
 """que arroja la función de frecuencia cardiaca. Esta función debe recibir como parámetro un
-vector asociado (MANUELA: ÓSEA LOS DATOS E Z? SI) a un registro ECG que le permita identificar los picos de las ondas R de una
+vector asociado a un registro ECG que le permita identificar los picos de las ondas R de una
 señal. Consideraciones para crear función:"""
-
-
-def findHR(FrMu1,X):
-    frecuencia_muestreo= FrMu1
-    time= np.arange(np.size(X))/ frecuencia_muestreo
-
-    peaks, _ = find_peaks(X, height=0.5, width=5)  # para encontrar solo las ondas R, cada latido
-    time_ecg = time[peaks]
-    time_ecg = time_ecg[1:0]
-    # distancia entre picos
-    taco = np.diff(time_ecg)  # la diferencia en el tiempo
-    tacobpm = taco / 60  # paso de segundos a minutos
-    # la frecuencia se da:
-    HR = np.mean(tacobpm) #la media del taco de BPM
-    return HR
+HR = tk.BooleanVar()
+def findHR():
+    if HR.get():
+        X = RK4(ti, Ti, h)
+        frecuencia_muestreo= FR.get()
+        time= np.arange(np.size(X))/ frecuencia_muestreo
+        peaks, _ = find_peaks(X, height=0.5, width=5)  # para encontrar solo las ondas R, cada latido
+        time_ecg = time[peaks]
+        time_ecg = time_ecg[1:0]
+        # distancia entre picos
+        taco = np.diff(time_ecg)  # la diferencia en el tiempo
+        tacobpm = taco / 60  # paso de segundos a minutos
+        # la frecuencia se da:
+        res = np.mean(tacobpm) #la media del taco de BPM
+    else:
+        res=''
+    return res
 # puntos iniciales
 def plotear_metodos():
     fig = Figure(figsize=(4, 3), dpi=80)
+    parametros_val = obtener()[2]
+    fm = float(parametros_val[2])
+    f = float(parametros_val[0])
+    LPM = float(parametros_val[1])
+    FR = float(parametros_val[-1])
     h = 1 / fm
     X0 = 1.0
     Y0 = 0.0
     Z0 = 0.04
     Ti = np.arange(0.0, LPM + h, h)
     ti = np.random.normal(60 / f, 0.05 * (60 / f), len(Ti))
-    ZEB = EulerBack() + np.random.normal(FR, 0.05 * FR, len(Ti))
-    ZEF = EulerForward(X0, Y0, Z0, h) + np.random.normal(FR, 0.05 * FR, len(Ti))
-    ZEM = EulerMod(X0, Y0, Z0, h, Ti, ti) + np.random.normal(FR, 0.05 * FR, len(Ti))
-    ZRK2 = RK2(ti, Ti, h) + np.random.normal(FR, 0.05 * FR, len(Ti))
-    ZRK4 = RK4(ti, Ti, h) + np.random.normal(FR, 0.05 * FR, len(Ti))
     if EuAt.get():
+        ZEB = EulerBack() + np.random.normal(FR, 0.05 * FR, len(Ti))
         fig.add_subplot(111).plot(Ti,ZEB)
     if EuAd.get():
+        ZEF = EulerForward(X0, Y0, Z0, h) + np.random.normal(FR, 0.05 * FR, len(Ti))
         fig.add_subplot(111).plot(Ti,ZEF)
     if EuMod.get():
+        ZEM = EulerMod(X0, Y0, Z0, h, Ti, ti) + np.random.normal(FR, 0.05 * FR, len(Ti))
         fig.add_subplot(111).plot(Ti,ZEM)
     if RK2val.get():
+        ZRK2 = RK2(ti, Ti, h) + np.random.normal(FR, 0.05 * FR, len(Ti))
         fig.add_subplot(111).plot(Ti,ZRK2)
     if RK4val.get():
+        ZRK4 = RK4(ti, Ti, h) + np.random.normal(FR, 0.05 * FR, len(Ti))
         fig.add_subplot(111).plot(Ti,ZRK4)
-
-    # encontrar picos para hallar frecuencia cardíaca desde el ECG
-X= [0.0,LPM+h]
+    canvas = FigureCanvasTkAgg(fig, window)
+    canvas.draw()
+    canvas.get_tk_widget().place(x=130, y=60)
+#Encontrar picos para hallar frecuencia cardíaca desde el ECG
 HRbutShow = tk.Label(master=window, height=1, width=4, highlightbackground='black',
-                     highlightthickness=2, bg="grey", textvariable=findHR(fm, X)).place(x=23, y=260)
+                     highlightthickness=2, bg="grey", textvariable=findHR()).place(x=23, y=260)
 
 HRbutton = tk.Checkbutton(master=window, height=3, width=9, highlightbackground='black', command=findHR,
-                       highlightthickness=2, bg="orange", text="Hallar HR", variable=findHR(fm, X),
+                       highlightthickness=2, bg="orange", text="Hallar HR", variable=HR,
                        onvalue=True, offvalue=False).place(x=5, y=200)
-
-#canvas = FigureCanvasTkAgg(fig, window)
-#canvas.draw()
-#canvas.get_tk_widget().place(x=130, y=60)
-
-
 
 R1 = tk.Checkbutton(master=root, text="Euler hacia adelante", command= plotear_metodos,bg='lightgreen',
                     onvalue=True, offvalue=False, variable=EuAd)
@@ -469,37 +388,36 @@ R5.place(x=50, y=220)
 """El usuario podrá exportar y cargar los datos obtenidos en un archivo binario, que
 contendrá los datos de la gráfica y un encabezado en formato texto (txt) con los parámetros
 de configuración del modelo."""
-
 #Importar archivo
-
 def UploadAction(event=None):
     filename = tk.filedialog.askopenfilename()
     filename2 = tk.filedialog.askopenfilename()
+    filename3=  tk.filedialog.askopenfilename()
 
     datosX = open(filename, 'rb')
     datosY = open(filename2, 'rb')
+    para= open(filename3, 'rb')
 
     Read_X = datosX.read()
     Read_Y = datosY.read()
+    Read_para= para.read()
 
 
     datosX.close()
     datosY.close()
+    Read_para.close()
 
     DatosZ = np.array(st.unpack('d' * int(len(Read_X) / 8), Read_X))
     Tiempo = np.array(st.unpack('d' * int(len(Read_Y) / 8), Read_Y))
+    paramet=  np.array(st.unpack('d' * int(len(Read_para)), Read_para))
 
-    print('Selected:', filename,filename2, DatosZ, Tiempo)
+    print('Selected:', filename,filename2,filename3, DatosZ, Tiempo, paramet)
 #respectivo botón:
 importButton = tk.Button(window, text='Importar datos', command=UploadAction, height=3, width=11, relief='raised',bg='lightgreen')
 importButton.place(x=10, y=100)
-
-#Exportar archivos
-
-#GUARDAR PARAMETROS EN STRING
-parametros= "Frecuencia Cardiaca, # de latidos, Frecuencia Muestreo y Factor de Ruido"
-
 def ExportAction():
+    # GUARDAR PARAMETROS EN STRING
+    parametrosstring = "Frecuencia Cardiaca, # de latidos, Frecuencia Muestreo y Factor de Ruido"
     h = 1 / fm
     X0 = 1.0
     Y0 = 0.0
@@ -517,8 +435,10 @@ def ExportAction():
     Modified = st.pack(ZEM,double)
     Runge2 = st.pack(ZRK2,double)
     Runge4 = st.pack(ZRK4,double)
-    print('Exporting:',tiempo, Forward, Modified, Runge2, Runge4)
- 
+    parametros =st.pack(parametrosstring, char)
+    print('Exporting:',tiempo, Forward, Modified, Runge2, Runge4, parametros)
+#Exportar archivos
+
 #respectivo botón:
 exportButton = tk.Button(window, text='Exportar datos', command=ExportAction, height=3, width=11,relief='raised', bg='lightgreen')
 exportButton.place(x=10, y=40)
