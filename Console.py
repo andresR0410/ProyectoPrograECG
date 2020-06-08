@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 import struct as st
-from PIL import Image, ImageTk
+#from PIL import Image, ImageTk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import numpy as np
@@ -34,10 +34,10 @@ photoimage_salir = photo_salir.subsample(20, 20)
 botonsalida = tk.Button(master= window, image=photoimage_salir, command= salir, padx=True, pady=True, bg='red')
 botonsalida.place(x=5, y=0)
 
-corazon = Image.open('Cora.jpg')
+"""corazon = Image.open('Cora.jpg')
 cora_resized = corazon.resize((100,100))
 cora = ImageTk.PhotoImage(cora_resized)
-coraLabel = tk.Label(window, image=cora).place(x=580, y=30)
+coraLabel = tk.Label(window, image=cora).place(x=580, y=30)"""
 
 #FRAME DE LOS PARÁMETROS
 parametros= tk.Frame(master=window)
@@ -299,7 +299,8 @@ def RK4(ti, Ti,h1):
 vector asociado a un registro ECG que le permita identificar los picos de las ondas R de una
 señal. Consideraciones para crear función:"""
 HR = tk.BooleanVar()
-def findHR():
+
+"""def findHR():
     if HR.get():
         parametros_val = obtener()[2]
         fm = float(parametros_val[2])
@@ -310,8 +311,9 @@ def findHR():
         ti = np.random.normal(60 / f, 0.05 * (60 / f), len(Ti))
         X = RK4(ti, Ti, h)
         time= np.arange(np.size(X))/ fm
-        peaks, _ = find_peaks(X, height=0.5, width=5)  # para encontrar solo las ondas R, cada latido
+        peaks, properties = find_peaks(X, height=0.5, width=5)  # para encontrar solo las ondas R, cada latido
         time_ecg = time[peaks]
+        time_ecg = time_ecg[1:]
         # distancia entre picos
         taco = np.diff(time_ecg)  # la diferencia en el tiempo
         tacobpm = taco / 60  # paso de segundos a minutos
@@ -319,7 +321,34 @@ def findHR():
         res = np.mean(tacobpm) #la media del taco de BPM
     else:
         res=''
+    return res"""
+
+def findHR():
+    total= np.array([])
+    dif=0
+    res1= 0
+    suma=0
+    if HR.get():
+        parametros_val = obtener()[2]
+        fm = float(parametros_val[2])
+        f = float(parametros_val[0])
+        LPM = float(parametros_val[1])
+        h = 1 / fm
+        Ti = np.arange(0.0, LPM + h, h)
+        ti = np.random.normal(60 / f, 0.05 * (60 / f), len(Ti))
+        X = RK4(ti, Ti, h)
+        time= np.arange(np.size(X))/ fm
+        peaks = find_peaks(X, height=0.02)  # para encontrar solo las ondas R, cada latido
+        for i in range(1, np.size(peaks[0])):
+            dif= (Ti[peaks[0][i]] - Ti[peaks[0][i - 1]])
+            total= np.append(total,dif)
+            suma+= total[i-1]
+        res = (suma / np.size(total))*60
+    else:
+        res=''
+    print(res)
     return res
+
 # puntos iniciales
 def plotear_metodos():
     fig = Figure(figsize=(5, 3), dpi=80)
@@ -354,7 +383,7 @@ def plotear_metodos():
     canvas.get_tk_widget().place(x=10, y=30)
 #Encontrar picos para hallar frecuencia cardíaca desde el ECG
 HRbutShow = tk.Label(master=window, height=1, width=4, highlightbackground='black',
-                     highlightthickness=2, bg="grey", textvariable=findHR()).place(x=23, y=260)
+                     highlightthickness=2, bg="grey", textvariable= findHR() ).place(x=23, y=260)
 
 HRbutton = tk.Checkbutton(master=window, height=3, width=9, highlightbackground='black', command=findHR,
                        highlightthickness=2, bg="orange", text="Hallar HR", variable=HR,
