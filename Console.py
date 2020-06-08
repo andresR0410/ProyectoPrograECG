@@ -325,8 +325,6 @@ HR = tk.BooleanVar()
 
 def findHR():
     total= np.array([])
-    dif=0
-    res1= 0
     suma=0
     if HR.get():
         parametros_val = obtener()[2]
@@ -342,8 +340,8 @@ def findHR():
         for i in range(1, np.size(peaks[0])):
             dif= (Ti[peaks[0][i]] - Ti[peaks[0][i - 1]])
             total= np.append(total,dif)
-            suma+= total[i-1]
-        res = (suma / np.size(total))*60
+        suma= np.mean(total)
+        res = suma*60
     else:
         res=''
     print(res)
