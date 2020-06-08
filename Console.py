@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 import struct as st
-from PIL import Image, ImageTk
+#from PIL import Image, ImageTk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import numpy as np
@@ -33,11 +33,11 @@ photo_salir = tk.PhotoImage(file = "Boton-salir.png")
 photoimage_salir = photo_salir.subsample(20, 20)
 botonsalida = tk.Button(master= window, image=photoimage_salir, command= salir, padx=True, pady=True, bg='red')
 botonsalida.place(x=5, y=0)
-
+"""
 corazon = Image.open('Cora.jpg')
 cora_resized = corazon.resize((100,100))
 cora = ImageTk.PhotoImage(cora_resized)
-coraLabel = tk.Label(window, image=cora).place(x=580, y=30)
+coraLabel = tk.Label(window, image=cora).place(x=580, y=30)"""
 
 #FRAME DE LOS PARÁMETROS
 parametros= tk.Frame(master=window)
@@ -308,14 +308,15 @@ def findHR():
         h = 1 / fm
         Ti = np.arange(0.0, LPM + h, h)
         ti = np.random.normal(60 / f, 0.05 * (60 / f), len(Ti))
-        X = EulerBack(Ti, ti, h)
-        peaks, properties = find_peaks(X) # para encontrar solo las ondas R, cada latido
+        X = RK4(ti, Ti, h)
+        time= np.arange(np.size(X))/ fm
+        peaks, _ = find_peaks(X, height=0.5, width=5)  # para encontrar solo las ondas R, cada latido
+        time_ecg = time[peaks]
         # distancia entre picos
-        taco = np.diff(Ti[peaks])  # la diferencia en el tiempo
+        taco = np.diff(time_ecg)  # la diferencia en el tiempo
         tacobpm = taco / 60  # paso de segundos a minutos
         # la frecuencia se da:
         res = np.mean(tacobpm) #la media del taco de BPM
-        print(res)
     else:
         res=''
     return res
@@ -353,7 +354,7 @@ def plotear_metodos():
     canvas.get_tk_widget().place(x=10, y=30)
 #Encontrar picos para hallar frecuencia cardíaca desde el ECG
 HRbutShow = tk.Label(master=window, height=1, width=4, highlightbackground='black',
-                     highlightthickness=2, bg="grey", textvariable=findHR).place(x=23, y=260)
+                     highlightthickness=2, bg="grey", textvariable=findHR()).place(x=23, y=260)
 
 HRbutton = tk.Checkbutton(master=window, height=3, width=9, highlightbackground='black', command=findHR,
                        highlightthickness=2, bg="orange", text="Hallar HR", variable=HR,
@@ -385,81 +386,105 @@ R5.place(x=50, y=220)
 contendrá los datos de la gráfica y un encabezado en formato texto (txt) con los parámetros
 de configuración del modelo."""
 #Importar archivo
+
 def UploadAction(event=None):
- fig = Figure(figsize=(5, 3), dpi=80)
- filenametxt = tk.filedialog.askopenfilename()
+    fig = Figure(figsize=(5, 3), dpi=80)
+    filenametxt = tk.filedialog.askopenfilename()
 
- filenamebinDatosZ = tk.filedialog.askopenfilename()
- filenamebinDatosT = tk.filedialog.askopenfilename()
+    filenamebinDatosZ = tk.filedialog.askopenfilename()
+    filenamebinDatosT = tk.filedialog.askopenfilename()
 
- filesize = os.path.getsize(filenamebinDatosZ)
- filesize1 = os.path.getsize(filenametxt)
- filesize2 = os.path.getsize( filenamebinDatosT)
+    filesize = os.path.getsize(filenamebinDatosZ)
+    filesize1 = os.path.getsize(filenametxt)
+    filesize2 = os.path.getsize( filenamebinDatosT)
 
- DatosZ= 0
- Tiempo= 0
- parametros= []
- if filesize == 0 and filesize2==0:
-    print("Los datos de Z o Tiempo están vacíos is empty " )
- else:
-     Read_Y = filenamebinDatosZ.read()
-     filenamebinDatosZ.close()
-     DatosZ = np.array(st.unpack('d' * int(len(Read_Y) / 8), Read_Y))
-     Read_X = filenamebinDatosT
-     filenamebinDatosT.close()
-     Tiempo = np.array(st.unpack('d' * int(len(Read_X) / 8), Read_X))
-     fig.add_subplot(111).plot(Tiempo, DatosZ)
+    DatosZ= 0
+    Tiempo= 0
+    parametros= []
+    if filesize == 0 and filesize2==0:
+        print("Los datos de Z o Tiempo están vacíos is empty " )
+    else:
+        Read_Y = filenamebinDatosZ.read()
+        filenamebinDatosZ.close()
+        DatosZ = np.array(st.unpack('d' * int(len(Read_Y) / 8), Read_Y))
+        Read_X = filenamebinDatosT
+        filenamebinDatosT.close()
+        Tiempo = np.array(st.unpack('d' * int(len(Read_X) / 8), Read_X))
+        fig.add_subplot(111).plot(Tiempo, DatosZ)
 
- if filesize1 == 0:
-    print("Los parámetros están vacíos" + str(filesize1))
- else:
-     f = open(filenametxt, 'r')
-     fr_cardiaca = f.readline(0)
-     fr_muestreo = f.readline(1)
-     lpm = f.readline(2)
-     factor_ruido = f.readline(3)
-     filenametxt.close()
-     parametros = [fr_cardiaca, fr_muestreo, lpm, factor_ruido]
-     FC.set(fr_cardiaca)
-     Lat.set(lpm)
-     FM.set(fr_muestreo)
-     FR.set(factor_ruido)
+    if filesize1 == 0:
+        print("Los parámetros están vacíos" + str(filesize1))
+    else:
+        f = open(filenametxt, 'r')
+        fr_cardiaca = f.readline(0)
+        fr_muestreo = f.readline(1)
+        lpm = f.readline(2)
+        factor_ruido = f.readline(3)
+        filenametxt.close()
+        parametros = [fr_cardiaca, fr_muestreo, lpm, factor_ruido]
+        FC.set(fr_cardiaca)
+        Lat.set(lpm)
+        FM.set(fr_muestreo)
+        FR.set(factor_ruido)
 
- print('Selected:', filenametxt, filenamebinDatosZ, filenamebinDatosT, DatosZ, Tiempo, parametros)
+    print('Selected:', filenametxt, filenamebinDatosZ, filenamebinDatosT, DatosZ, Tiempo, parametros)
 
 #respectivo botón:
 importButton = tk.Button(window, text='Importar datos', command=UploadAction, height=3, width=11, relief='raised',bg='lightgreen')
 importButton.place(x=10, y=100)
 
 def ExportAction():
- double= 8
- char= 1
- # GUARDAR PARAMETROS EN STRING
- parametrosstring = "Frecuencia Cardiaca, # de latidos, Frecuencia Muestreo y Factor de Ruido"
- parametros_val = obtener()[2]
- fm = float(parametros_val[2])
- f = float(parametros_val[0])
- LPM = float(parametros_val[1])
- h = 1 / fm
- X0 = 1.0
- Y0 = 0.0
- Z0 = 0.04
- Ti = np.arange(0.0, LPM + h, h)
- ti = np.random.normal(60 / f, 0.05 * (60 / f), len(Ti))
 
- ZEB = EulerBack(Ti,ti,h) + np.random.normal(f, 0.05 * f, len(Ti))
- ZEF = EulerForward(X0, Y0, Z0, h, Ti, ti) + np.random.normal(f, 0.05 * f, len(Ti))
- ZEM = EulerMod(X0, Y0, Z0, h, Ti, ti) + np.random.normal(f, 0.05 * f, len(Ti))
- ZRK2 = RK2(ti, Ti, h) + np.random.normal(f, 0.05 * f, len(Ti))
- ZRK4 = RK4(ti, Ti, h) + np.random.normal(f, 0.05 * f, len(Ti))
- #Crear archivos
- tiempo = st.pack(ZEB,double)
- Forward = st.pack(ZEF,double)
- Modified = st.pack(ZEM,double)
- Runge2 = st.pack(ZRK2,double)
- Runge4 = st.pack(ZRK4,double)
- parametros =st.pack(parametrosstring, char)
- print('Exporting:',tiempo, Forward, Modified, Runge2, Runge4, parametros)
+    # GUARDAR PARAMETROS EN STRING
+
+    parametros_val = obtener()[2]
+    fm = float(parametros_val[2])
+    f = float(parametros_val[0])
+    LPM = float(parametros_val[1])
+    ruido= float(parametros_val[3])
+    h = 1 / fm
+    X0 = 1.0
+    Y0 = 0.0
+    Z0 = 0.04
+    Ti = np.arange(0.0, LPM + h, h)
+    ti = np.random.normal(60 / f, 0.05 * (60 / f), len(Ti))
+
+    ZEB = EulerBack(Ti,ti,h) + np.random.normal(f, 0.05 * f, len(Ti))
+    ZEF = EulerForward(X0, Y0, Z0, h, Ti, ti) + np.random.normal(f, 0.05 * f, len(Ti))
+    ZEM = EulerMod(X0, Y0, Z0, h, Ti, ti) + np.random.normal(f, 0.05 * f, len(Ti))
+    ZRK2 = RK2(ti, Ti, h) + np.random.normal(f, 0.05 * f, len(Ti))
+    ZRK4 = RK4(ti, Ti, h) + np.random.normal(f, 0.05 * f, len(Ti))
+    #Crear archivos bin y txt
+
+    tiempo1= st.pack("d" * len(Ti), *Ti)
+    Back= st.pack("d" * len(ZEB), *ZEB)
+    Forward = st.pack("d"* len(ZEF),*ZEF)
+    Modified = st.pack("d"* len(ZEM),*ZEM)
+    Runge2 = st.pack("d"* len(ZRK2),*ZRK2)
+    Runge4 = st.pack("d"* len(ZRK4),*ZRK4)
+
+
+    ECG = open("DatosECG.bin", "wb")
+    ECG.write(tiempo1)
+    ECG.write(Back)
+    ECG.write(Forward)
+    ECG.write(Modified)
+    ECG.write(Runge2)
+    ECG.write(Runge4)
+
+
+    ECG.close()
+
+    para = open("parametrosECG.txt" , "w+")
+
+    para.write("Frecuencia Cardiaca "+ str(f))
+    para.write(", # de latidos "+ str(LPM))
+    para.write(", Fr. muestreo "+ str(fm))
+    para.write(", Factor de Ruido "+ str(ruido))
+
+    para.close()
+
+    print('Exporting:',tiempo1, Forward, Modified, Runge2, Runge4, parametros)
 #Exportar archivos
 
 #respectivo botón:

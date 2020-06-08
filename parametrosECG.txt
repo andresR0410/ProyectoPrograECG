@@ -1,0 +1,1 @@
+Frecuencia Cardiaca80.0# de latidos30.0Fr. muestreo300.0Factor de Ruido0.02
