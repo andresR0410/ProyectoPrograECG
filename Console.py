@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 import struct as st
-#from PIL import Image, ImageTk
+from PIL import Image, ImageTk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import numpy as np
@@ -34,10 +34,10 @@ photoimage_salir = photo_salir.subsample(20, 20)
 botonsalida = tk.Button(master= window, image=photoimage_salir, command= salir, padx=True, pady=True, bg='red')
 botonsalida.place(x=5, y=0)
 
-"""corazon = Image.open('Cora.jpg')
+corazon = Image.open('Cora.jpg')
 cora_resized = corazon.resize((100,100))
 cora = ImageTk.PhotoImage(cora_resized)
-coraLabel = tk.Label(window, image=cora).place(x=580, y=30)"""
+coraLabel = tk.Label(window, image=cora).place(x=580, y=30)
 
 #FRAME DE LOS PARÁMETROS
 parametros= tk.Frame(master=window)
