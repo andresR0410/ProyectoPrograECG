@@ -156,17 +156,8 @@ EuMod=tk.BooleanVar()
 RK2val=tk.BooleanVar()
 RK4val=tk.BooleanVar()
 #Condiciones a usar en los métodos e implementación de los mismos
-fm= float(FM.get())
-LPM = float(Lat.get())
-f = float(FC.get())
-h = 1 / fm
 pi = np.pi
 thi = [-pi / 3, -pi / 12, 0, pi / 12, pi / 2]
-X0 = 1.0
-Y0 = 0.0
-Z0 = 0.04
-Ti = np.arange(0.0, LPM + h, h)
-ti = np.random.normal(60 / f, 0.05 * (60 / f), len(Ti))
 def dx(ti, x, y):
     alpha = (1.0 - np.sqrt((x**2.0) + (y**2.0)))
     w = 2.0*np.pi* (1/ti)
@@ -184,7 +175,7 @@ def dz(t, x, y, z):
         ECG += -(ai[i] * (np.fmod(np.arctan2(y, x) - thi[i], 2 * np.pi)) * np.exp(
             -((np.fmod(np.arctan2(y, x) - thi[i], 2 * np.pi)) ** 2) / (2 * (bi[i] ** 2))))
     return ECG - (z - z0)
-def EulerForward(x0, y0, z0, h):
+def EulerForward(x0, y0, z0, h, Ti, ti):
     tam = np.size(Ti)
     X = np.zeros(tam)
     Y = np.zeros(tam)
@@ -202,7 +193,7 @@ def EulerBackRoot(yt2, t2, xt1, yt1, zt1, h, ti):
     return [xt1 + h * dx(ti, yt2[0], yt2[1]) - yt2[0],
             yt1 + h * dy(ti, yt2[0], yt2[1]) - yt2[1],
             zt1 + h * dz(t2, yt2[0], yt2[1], yt2[2]) - yt2[2]]
-def EulerBack():
+def EulerBack(Ti, ti, h):
     tam = np.size(Ti)
     X = np.zeros(tam)
     Y = np.zeros(tam)
@@ -309,12 +300,17 @@ señal. Consideraciones para crear función:"""
 HR = tk.BooleanVar()
 def findHR():
     if HR.get():
+        parametros_val = obtener()[2]
+        fm = float(parametros_val[2])
+        f = float(parametros_val[0])
+        LPM = float(parametros_val[1])
+        h = 1 / fm
+        Ti = np.arange(0.0, LPM + h, h)
+        ti = np.random.normal(60 / f, 0.05 * (60 / f), len(Ti))
         X = RK4(ti, Ti, h)
-        frecuencia_muestreo= FR.get()
-        time= np.arange(np.size(X))/ frecuencia_muestreo
+        time= np.arange(np.size(X))/ fm
         peaks, _ = find_peaks(X, height=0.5, width=5)  # para encontrar solo las ondas R, cada latido
         time_ecg = time[peaks]
-        time_ecg = time_ecg[1:0]
         # distancia entre picos
         taco = np.diff(time_ecg)  # la diferencia en el tiempo
         tacobpm = taco / 60  # paso de segundos a minutos
@@ -325,7 +321,7 @@ def findHR():
     return res
 # puntos iniciales
 def plotear_metodos():
-    fig = Figure(figsize=(4, 3), dpi=80)
+    fig = Figure(figsize=(5, 3), dpi=80)
     parametros_val = obtener()[2]
     fm = float(parametros_val[2])
     f = float(parametros_val[0])
@@ -338,10 +334,10 @@ def plotear_metodos():
     Ti = np.arange(0.0, LPM + h, h)
     ti = np.random.normal(60 / f, 0.05 * (60 / f), len(Ti))
     if EuAt.get():
-        ZEB = EulerBack() + np.random.normal(FR, 0.05 * FR, len(Ti))
+        ZEB = EulerBack(Ti, ti,h) + np.random.normal(FR, 0.05 * FR, len(Ti))
         fig.add_subplot(111).plot(Ti,ZEB)
     if EuAd.get():
-        ZEF = EulerForward(X0, Y0, Z0, h) + np.random.normal(FR, 0.05 * FR, len(Ti))
+        ZEF = EulerForward(X0, Y0, Z0, h,Ti, ti) + np.random.normal(FR, 0.05 * FR, len(Ti))
         fig.add_subplot(111).plot(Ti,ZEF)
     if EuMod.get():
         ZEM = EulerMod(X0, Y0, Z0, h, Ti, ti) + np.random.normal(FR, 0.05 * FR, len(Ti))
@@ -352,9 +348,9 @@ def plotear_metodos():
     if RK4val.get():
         ZRK4 = RK4(ti, Ti, h) + np.random.normal(FR, 0.05 * FR, len(Ti))
         fig.add_subplot(111).plot(Ti,ZRK4)
-    canvas = FigureCanvasTkAgg(fig, window)
+    canvas = FigureCanvasTkAgg(fig, ECG)
     canvas.draw()
-    canvas.get_tk_widget().place(x=130, y=60)
+    canvas.get_tk_widget().place(x=10, y=30)
 #Encontrar picos para hallar frecuencia cardíaca desde el ECG
 HRbutShow = tk.Label(master=window, height=1, width=4, highlightbackground='black',
                      highlightthickness=2, bg="grey", textvariable=findHR()).place(x=23, y=260)
